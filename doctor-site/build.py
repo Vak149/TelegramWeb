@@ -13,6 +13,7 @@ from pathlib import Path
 
 from config import (CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
+from decor import CURVE, MOL
 from content_articles import MORE_ARTICLES
 from content_extra import (ANALYSES, MATERIALS, NOT_MY_FIELD, PREP_DIARY, PREP_FORMAT, PREP_LABS, PREP_MEDS,
                            PREP_TIMING, QUESTIONS_TO_DOCTOR, VIDEOS)
@@ -107,7 +108,7 @@ SEO_Q = {
 }
 
 
-def page(path, title, description, body, h1, schema=(), trail=None, og_type="website"):
+def page(path, title, description, body, h1, schema=(), trail=None, og_type="website", hero=None):
     title = SEO_Q.get(path, title)
     full_title = f"{title} — {DOCTOR['specialty'].split(',')[0].replace('врач-', '')} {plain(DOCTOR['short_name'])}".strip()
     crumbs = breadcrumbs(trail) if trail else ""
@@ -127,6 +128,9 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <meta property="og:description" content="{html.escape(description)}">
 <meta property="og:url" content="{url(path)}">
 <meta property="og:image" content="{url('/img/og-doctor.jpg')}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@1,7..72,400&display=swap">
 <link rel="stylesheet" href="/style.css">
 {"".join(ld(s) for s in schema)}
 </head>
@@ -137,12 +141,11 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <div class="actions"><a class="btn small" href="/consultation#booking" data-goal="cta_header">Записаться</a>
 <details class="menu"><summary aria-label="Меню">Меню</summary><nav aria-label="Меню">{nav}</nav></details></div>
 </div></header>
+{hero if hero else f'<div class="pagehead blue grain">{MOL}<div class="wrap">{crumbs}<h1>{e(h1)}</h1></div></div>'}
 <main><div class="wrap">
-{crumbs}
-<h1>{e(h1)}</h1>
 {body}
 </div></main>
-<footer class="site"><div class="wrap">
+<footer class="site grain">{MOL}<div class="wrap">
 <p><strong>Направления:</strong></p><ul>{dirs}</ul>
 <p>{e(LEGAL['form'])} {e(DOCTOR['name'])}, ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}. {e(LEGAL['address'])}. E-mail: {e(LEGAL['email'])}</p>
 <p>{e(DISCLAIMER)} {e(CONTRAINDICATIONS)}</p>
@@ -171,7 +174,7 @@ def disclaimer_block():
 
 
 def price_block():
-    return f"""<div class="card"><p class="price">{price()}</p>
+    return f"""<div class="pricecard"><p class="price">{price()}<small>видеосвязь</small></p>
 <p>{e(SERVICE['name'])}. Длительность: {e(SERVICE['duration'])}. Платформа: {e(SERVICE['platform'])}.</p>
 <a class="btn" href="/consultation#booking" data-goal="cta_price">Записаться на консультацию</a>
 {disclaimer_block()}</div>"""
@@ -220,27 +223,45 @@ def booking_form():
 # ---------- страницы ----------
 
 def build_home():
-    dirs = "".join(f'<div class="card"><h3><a href="/{d["slug"]}">{e(d["nav"])}</a></h3><p>{e(d["how"])}</p></div>' for d in DIRECTIONS)
-    badges = "".join(f'<li><a href="{m["url"]}" rel="noopener">{e(m["name"])}</a></li>' for m in DOCTOR["memberships"])
-    body = f"""<div class="hero"><div>
-<p>{e(DOCTOR['name'])} — {e(DOCTOR['specialty'])}. Разбираю жалобы, анализы и питание онлайн и объясняю, что делать дальше.</p>
-<ul class="badges">{badges}</ul>
-<p class="price">{price()} <small>за консультацию</small></p>
-<p><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию</a> <a class="btn ghost" href="/about">О враче</a></p>
+    d = DOCTOR
+    alt = f"{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"
+    members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
+    hero = f"""<div class="home-hero blue grain on-blue">{MOL}{CURVE}<span class="curve-label" aria-hidden="true">суточный ритм кортизола</span>
+<div class="wrap hero-grid"><div>
+<span class="kicker">Онлайн-консультация по видеосвязи</span>
+<h1>Эндокринолог и диетолог онлайн: понятно о гормонах, анализах и питании</h1>
+<p class="lead">Разбираю ваши жалобы и результаты обследований, объясняю, что они значат, и подсказываю следующий шаг.</p>
+<div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться · {price()}</a><a class="btn ghost" href="/about">О враче</a></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><b>{len(d['memberships'])}</b>международные ассоциации</div><div><b>онлайн</b>из любого города</div></div>
 </div>
-<img class="photo" src="{DOCTOR['photo']}" width="300" height="420" alt="{html.escape(plain(DOCTOR['name']) or 'Врач')}, {DOCTOR['specialty']}" fetchpriority="high">
-</div>
-<h2>С какими вопросами обращаются</h2><div class="grid three">{dirs}</div>
-<h2>Что входит в консультацию</h2>{ul(CONSULT_INCLUDES)}
-<h2>Когда онлайн-формат не подходит</h2>{ul(NOT_ONLINE_COMMON)}
-<p><a href="/blog/kogda-onlajn-format-ne-podhodit">Подробнее о границах онлайн-формата →</a></p>
-{not_my_field_block()}
-{videos_block()}
-{materials_teaser()}
-{price_block()}"""
+<div class="portrait"><img src="{d['photo']}" width="440" height="550" alt="{alt}" fetchpriority="high"></div>
+</div></div>
+<div class="trust"><div class="wrap"><span>Член ассоциаций:</span>{members}</div></div>"""
+    topics = "".join(f'<a class="topic" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="arr" aria-hidden="true">→</span></a>' for x in DIRECTIONS)
+    labs = "".join(f'<a href="/analizy/{a["slug"]}">{e(a["name"].split(" (")[0])}</a>' for a in ANALYSES)
+    calcs = "".join(f'<a href="/calculators/{c["slug"]}">{e(c["nav"])}</a>' for c in CALCS)
+    dots = "".join(f"<li>{e(i[:1].upper() + i[1:])}</li>" for i in CONSULT_INCLUDES)
+    body = f"""<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2>
+<p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. Образование, сертификаты и подтверждение членства в ассоциациях — <a href="/documents">на странице документов</a>.</p></div>
+<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
+<span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С чем приходят на консультацию</h2>
+<div class="topics">{topics}</div>
+<div class="panel" id="consult"><div><span class="kicker">Онлайн-консультация</span><h2>Что вы получите</h2><ul class="dots">{dots}</ul></div>
+<div class="pricebox"><p class="price">{price()}<small>видеосвязь</small></p>
+<p style="margin:0;color:var(--ink-2);font-size:15px">Подготовьте анализы в PDF или фото, список препаратов и вопросы. Если анализов нет — подскажу, с чего начать. <a href="/preparation">Как подготовиться</a></p>
+<a class="btn" href="/consultation#booking" data-goal="cta_price">Записаться на консультацию</a>{disclaimer_block()}</div></div>
+<span class="kicker" style="margin-top:72px">Разбор анализов</span><h2 style="margin-top:12px">Что значит ваш результат</h2>
+<div class="chips">{labs}</div>
+<div class="two"><div class="card"><span class="kicker">Честно о формате</span><h3>Когда онлайн не подходит</h3>{ul(NOT_ONLINE_COMMON)}
+<p><a href="/blog/kogda-onlajn-format-ne-podhodit">Подробнее о границах формата →</a></p></div>
+<div class="card"><span class="kicker">Границы специальности</span><h3>Куда я направлю</h3><ul>{"".join(f"<li>{e(a)} — <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div>
+<div class="two"><div class="card blue grain">{CURVE}<span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
+<p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
+<div class="card"><span class="kicker">Калькуляторы</span><h3>Посчитайте сами</h3><div class="chips">{calcs}</div></div></div>
+{videos_block()}"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
-         body, "Эндокринолог и диетолог онлайн — консультация врача")
+         body, "", hero=hero)
 
 
 def build_about():
