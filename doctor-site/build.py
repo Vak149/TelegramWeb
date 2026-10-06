@@ -13,10 +13,12 @@ from pathlib import Path
 
 from config import (CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
+from content_articles import MORE_ARTICLES
 from content import (ARTICLES, CONSULT_INCLUDES, CONSULT_PREPARE, DIRECTIONS, FAQ,
                      NOT_ONLINE_COMMON, PLANNED_ARTICLES, PUBLISHED, REVIEWS, UPDATED)
 
 ROOT = Path(__file__).parent
+ARTICLES = ARTICLES + MORE_ARTICLES
 DIST = ROOT / "dist"
 TODAY = date.today().isoformat()
 FORBIDDEN = [r"гарант", r"100\s*%", r"вылеч", r"избави", r"лучший врач", r"самый опытный"]
@@ -174,7 +176,8 @@ def price_block():
 
 def doctor_block():
     badges = "".join(f'<li><a href="{m["url"]}" rel="noopener">{e(m["name"])}</a></li>' for m in DOCTOR["memberships"])
-    return f"""<div class="card"><h2>Врач</h2>
+    return f"""<div class="card doctor"><h2>Врач</h2>
+<img src="{DOCTOR['photo']}" width="120" height="168" loading="lazy" alt="{html.escape(plain(DOCTOR['name']))}, {DOCTOR['specialty']}">
 <p><a href="/about"><strong>{e(DOCTOR['name'])}</strong></a>, {e(DOCTOR['specialty'])}. Практика с {e(DOCTOR['practice_since'])} года.</p>
 <p>Член профессиональных ассоциаций:</p><ul class="badges">{badges}</ul>
 <p><a href="/documents">Дипломы, сертификаты и подтверждения членства →</a></p></div>"""
@@ -271,6 +274,7 @@ def build_consultation():
 <ol><li>Вы оставляете заявку или пишете в мессенджер.</li><li>Вам подтверждают время и присылают ссылку ({e(SERVICE['platform'])}).</li>
 <li>Консультация по видеосвязи, {e(SERVICE['duration'])}.</li><li>После — письменные рекомендации [УТОЧНИТЬ: формат].</li></ol>
 <h2>Что подготовить</h2>{ul(CONSULT_PREPARE)}
+<p><a href="/pamyatka-k-konsultacii.txt" download data-goal="memo_download">Скачать памятку «Как подготовиться к консультации»</a></p>
 <h2>Что не входит и не решается онлайн</h2>{ul(NOT_ONLINE_COMMON)}
 <h2>Перенос и отмена</h2><p>{e(SERVICE['cancel_policy'])}</p>
 <h2>Повторная консультация</h2><p>{e(SERVICE['repeat'])}</p>
@@ -357,7 +361,7 @@ def build_blog():
         schema = {"@context": "https://schema.org", "@type": "Article", "headline": a["title"], "description": a["description"],
                   "datePublished": PUBLISHED, "dateModified": UPDATED, "author": physician_ref(), "reviewedBy": physician_ref(),
                   "mainEntityOfPage": url(path), "image": url("/img/og-doctor.jpg"), "inLanguage": "ru"}
-        page(path, a["title"], a["description"], body, a["title"], [schema], [("Статьи", "/blog"), (a["title"], path)], "article")
+        page(path, a.get("seo", a["title"]), a["description"], body, a["title"], [schema], [("Статьи", "/blog"), (a["title"], path)], "article")
 
 
 def build_contacts():
@@ -455,6 +459,8 @@ def main():
     for d in DIRECTIONS:
         build_direction(d)
     build_faq(); build_reviews(); build_documents(); build_blog(); build_contacts(); build_legal(); build_thanks()
+    memo = "Как подготовиться к онлайн-консультации\n" + DOCTOR["name"] + ", " + DOCTOR["specialty"] + "\n\nПодготовьте:\n" + "".join(f"- {x}\n" for x in CONSULT_PREPARE) + "\n" + DISCLAIMER + "\n" + CONTRAINDICATIONS + "\n" + url("/consultation") + "\n"
+    (DIST / "pamyatka-k-konsultacii.txt").write_text(memo, encoding="utf-8")
     build_service_files([p for p, *_ in PAGES if p != "/thanks"])
     check(strict)
 

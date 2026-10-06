@@ -13,7 +13,7 @@ python3 -m http.server -d dist 8000   # локальный просмотр
 - `static/` — стили и изображения (положить `img/doctor.webp`, `img/og-doctor.jpg`).
 
 ## Что реализовано
-Страницы: `/`, `/about`, `/consultation`, `/faq`, `/reviews`, `/documents`, `/blog` (+3 статьи), `/contacts`, `/privacy`, `/offer`, 6 направлений (`/thyroid`, `/diabetes`, `/insulin-resistance`, `/weight`, `/hormones`, `/nutrition`), `/thanks` (noindex).
+Страницы: `/`, `/about`, `/consultation`, `/faq`, `/reviews`, `/documents`, `/blog` (+11 статей), `/contacts`, `/privacy`, `/offer`, 6 направлений (`/thyroid`, `/diabetes`, `/insulin-resistance`, `/weight`, `/hormones`, `/nutrition`), `/thanks` (noindex).
 
 Schema.org: Physician, MedicalWebPage (с `reviewedBy`), Service+Offer, FAQPage, Article, BreadcrumbList, Organization; Review+AggregateRating — только когда в `content.py` появятся реальные отзывы.
 
@@ -22,7 +22,7 @@ Canonical, OG, sitemap.xml, robots.txt, viewport без блокировки з�
 Проверки при сборке: один H1, уникальные title/description и их длина, запрещённые формулировки, alt у изображений, валидный JSON-LD, зум не заблокирован.
 
 ## Цели Яндекс.Метрики
-Задать в `YANDEX_METRIKA_ID`. Клики по элементам с `data-goal` отправляются как цели: `phone_click`, `messenger_telegram`, `messenger_whatsapp`, `cta_*`. Отправка формы — цель «посещение /thanks» (настроить в интерфейсе Метрики). Цель «скачивание памятки» — добавить, когда появится памятка.
+Задать в `YANDEX_METRIKA_ID`. Клики по элементам с `data-goal` отправляются как цели: `phone_click`, `messenger_telegram`, `messenger_whatsapp`, `cta_*`. Отправка формы — цель «посещение /thanks» (настроить в интерфейсе Метрики). Скачивание памятки — цель `memo_download`.
 
 ## До запуска (нужно от клиента / юриста)
 Всё, что на сайте подсвечено жёлтым `[УТОЧНИТЬ]` — список из раздела 12 ТЗ. Тексты оферты и политики ПД — шаблоны, их проверяет юрист. Обработчик формы (`FORM_ACTION`) — сервер в РФ или виджет YClients/Dikidi. Хостинг — в РФ.
