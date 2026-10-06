@@ -22,7 +22,12 @@ from content import (ARTICLES, CONSULT_INCLUDES, CONSULT_PREPARE, DIRECTIONS, FA
 
 ROOT = Path(__file__).parent
 ARTICLES = ARTICLES + MORE_ARTICLES
-DIST = ROOT / "dist"
+THEME = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--theme=")), "yasnost")  # yasnost | blank
+DIST = ROOT / ("dist" if THEME == "yasnost" else f"dist-{THEME}")
+FONTS = {
+    "yasnost": "family=Manrope:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@1,7..72,400",
+    "blank": "family=Unbounded:wght@300;500&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500",
+}
 TODAY = date.today().isoformat()
 FORBIDDEN = [r"гарант", r"100\s*%", r"вылеч", r"избави", r"лучший врач", r"самый опытный"]
 PAGES = []  # (path, html) для проверок и sitemap
@@ -130,7 +135,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <meta property="og:image" content="{url('/img/og-doctor.jpg')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@1,7..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?{FONTS[THEME]}&display=swap">
 <link rel="stylesheet" href="/style.css">
 {"".join(ld(s) for s in schema)}
 </head>
@@ -259,6 +264,48 @@ def build_home():
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
 <div class="card"><span class="kicker">Калькуляторы</span><h3>Посчитайте сами</h3><div class="chips">{calcs}</div></div></div>
 {videos_block()}"""
+    page("/", "Эндокринолог и диетолог онлайн: консультация",
+         "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
+         body, "", hero=hero)
+
+
+def build_home_blank():
+    d = DOCTOR
+    alt = f"{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"
+    members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
+    hero = f"""<div class="home-hero"><div class="wrap hero-grid"><div>
+<span class="kicker">Онлайн-консультация · видеосвязь</span>
+<h1>Эндокринолог и диетолог онлайн: разберём <em>ваши анализы</em> и питание</h1>
+<p class="lead">Объясняю, что показывают результаты, какие обследования стоит пройти и к кому обратиться очно.</p>
+<div class="cta"><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию →</a><a class="btn ghost" href="/about">О враче</a></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><b>{len(d['memberships'])}</b>международные ассоциации</div><div><b>онлайн</b>из любого города</div></div>
+</div>
+<div class="portrait"><img src="{d['photo']}" width="420" height="525" alt="{alt}" fetchpriority="high">
+<div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b><br>{e(d['specialty'])}</div></div>
+</div></div>
+<div class="trust"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""
+    rows = "".join(f'<a class="row" href="/analizy/{a["slug"]}"><b>{e(a["name"].split(" (")[0])}</b><small>{e(a["what"].split(".")[0])}</small><span class="go">разбор →</span></a>' for a in ANALYSES[:6])
+    rows += '<a class="row" href="/calculators/homa-ir"><b>HOMA-IR</b><small>Расчётный индекс чувствительности к инсулину</small><span class="go">рассчитать →</span></a>'
+    dirs = "".join(f'<a class="dir" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">подробнее →</span></a>' for x in DIRECTIONS)
+    calcs = "".join(f'<a href="/calculators/{c["slug"]}"><b>{e(c["nav"])}</b><code>{f}</code></a>' for c, f in zip(CALCS, ["вес / рост²", "Миффлин — Сан Жеор", "глюкоза × инсулин / 22,5"]))
+    body = f"""<span class="kicker" style="margin-top:64px">Разбор анализов</span><h2 style="margin-top:12px">Что показывает ваш бланк</h2>
+<div class="sheet"><div class="sheet-head"><span class="kicker">Показатель</span><span class="kicker">Что показывает</span><span></span></div>{rows}</div>
+<span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С какими вопросами приходят</h2>
+<div class="dirs">{dirs}</div>
+<span class="kicker" style="margin-top:72px">Как проходит</span><h2 style="margin-top:12px">От заявки до рекомендаций</h2>
+<ol class="steps"><li><b>Заявка</b><p>На сайте или в мессенджере. Подтверждаем удобное время.</p></li>
+<li><b>Подготовка</b><p>Присылаете анализы в PDF или фото, список препаратов, дневник питания. <a href="/preparation">Подробнее</a></p></li>
+<li><b>Разговор</b><p>Видеосвязь: жалобы, история здоровья, разбор документов, ваши вопросы.</p></li>
+<li><b>Рекомендации</b><p>Какие обследования пройти, к кому обратиться очно, что изменить в питании.</p></li></ol>
+<div class="two"><div class="card"><span class="kicker">Честно о формате</span><h3>Когда онлайн не подходит</h3>{ul(NOT_ONLINE_COMMON)}</div>
+<div class="card"><span class="kicker">Границы специальности</span><h3>Чем я не занимаюсь</h3><ul>{"".join(f"<li>{e(a)} → <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div>
+<div class="two"><div class="card blue"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
+<p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
+<div class="calc-list">{calcs}</div></div>
+<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
+<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
+{videos_block()}
+{price_block()}"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
          body, "", hero=hero)
@@ -649,7 +696,10 @@ def main():
         shutil.rmtree(DIST)
     DIST.mkdir()
     shutil.copytree(ROOT / "static", DIST, dirs_exist_ok=True)
-    build_home(); build_about(); build_consultation()
+    if THEME != "yasnost":
+        css = (ROOT / "static/style.css").read_text(encoding="utf-8") + (ROOT / f"themes/{THEME}.css").read_text(encoding="utf-8")
+        (DIST / "style.css").write_text(css, encoding="utf-8")
+    (build_home_blank if THEME == "blank" else build_home)(); build_about(); build_consultation()
     for d in DIRECTIONS:
         build_direction(d)
     build_faq(); build_reviews(); build_documents(); build_blog(); build_contacts(); build_legal(); build_thanks()

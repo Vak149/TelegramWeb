@@ -4,6 +4,7 @@
 
 ```
 python3 build.py           # сборка в dist/ + проверки
+python3 build.py --theme=blank  # стиль «Бланк» в dist-blank/ (по умолчанию «Ясность» в dist/)
 python3 build.py --strict  # то же, но падает, пока есть незаполненные [УТОЧНИТЬ]
 python3 -m http.server -d dist 8000   # локальный просмотр
 ```
