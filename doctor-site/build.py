@@ -14,6 +14,8 @@ from pathlib import Path
 from config import (CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
 from content_articles import MORE_ARTICLES
+from content_extra import (ANALYSES, MATERIALS, NOT_MY_FIELD, PREP_DIARY, PREP_FORMAT, PREP_LABS, PREP_MEDS,
+                           PREP_TIMING, QUESTIONS_TO_DOCTOR, VIDEOS)
 from content import (ARTICLES, CONSULT_INCLUDES, CONSULT_PREPARE, DIRECTIONS, FAQ,
                      NOT_ONLINE_COMMON, PLANNED_ARTICLES, PUBLISHED, REVIEWS, UPDATED)
 
@@ -81,13 +83,13 @@ def metrika():
         return ""
     i = YANDEX_METRIKA_ID
     return f"""<script>(function(m,e,t,r,i,k,a){{m[i]=m[i]||function(){{(m[i].a=m[i].a||[]).push(arguments)}};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
-ym({i},"init",{{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true}});
+window.YM_ID={i};ym({i},"init",{{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true}});
 document.addEventListener("click",function(ev){{var a=ev.target.closest("[data-goal]");if(a)ym({i},"reachGoal",a.dataset.goal)}});</script>
 <noscript><div><img src="https://mc.yandex.ru/watch/{i}" style="position:absolute;left:-9999px" alt=""></div></noscript>"""
 
 
-NAV = [("/consultation", "Консультация"), ("/about", "О враче"), ("/documents", "Документы"),
-       ("/reviews", "Отзывы"), ("/blog", "Статьи"), ("/faq", "Вопросы"), ("/contacts", "Контакты")]
+NAV = [("/consultation", "Консультация"), ("/about", "О враче"), ("/preparation", "Подготовка"), ("/analizy", "Анализы"),
+       ("/calculators", "Калькуляторы"), ("/blog", "Статьи"), ("/reviews", "Отзывы"), ("/contacts", "Контакты")]
 
 
 SEO_Q = {
@@ -118,7 +120,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(full_title)}</title>
 <meta name="description" content="{html.escape(description)}">
-<link rel="canonical" href="{url(path)}">{'<meta name="robots" content="noindex">' if path == "/thanks" else ""}
+<link rel="canonical" href="{url(path)}">{'<meta name="robots" content="noindex">' if path.endswith("thanks") else ""}
 <meta property="og:type" content="{og_type}">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:title" content="{html.escape(title)}">
@@ -231,6 +233,9 @@ def build_home():
 <h2>Что входит в консультацию</h2>{ul(CONSULT_INCLUDES)}
 <h2>Когда онлайн-формат не подходит</h2>{ul(NOT_ONLINE_COMMON)}
 <p><a href="/blog/kogda-onlajn-format-ne-podhodit">Подробнее о границах онлайн-формата →</a></p>
+{not_my_field_block()}
+{videos_block()}
+{materials_teaser()}
 {price_block()}"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
@@ -255,6 +260,7 @@ def build_about():
 <h2>Повышение квалификации</h2>{ul(d['trainings'])}
 <h2>Публикации и выступления</h2>{pubs}
 <h2>Профили на внешних площадках</h2><ul>{prof}</ul>
+{not_my_field_block()}
 {price_block()}"""
     schema = {"@context": "https://schema.org", "@type": "Physician", "@id": url("/about#doctor"),
               "name": d["name"], "url": url("/about"), "image": url(d["photo"]),
@@ -274,10 +280,12 @@ def build_consultation():
 <ol><li>Вы оставляете заявку или пишете в мессенджер.</li><li>Вам подтверждают время и присылают ссылку ({e(SERVICE['platform'])}).</li>
 <li>Консультация по видеосвязи, {e(SERVICE['duration'])}.</li><li>После — письменные рекомендации [УТОЧНИТЬ: формат].</li></ol>
 <h2>Что подготовить</h2>{ul(CONSULT_PREPARE)}
-<p><a href="/pamyatka-k-konsultacii.txt" download data-goal="memo_download">Скачать памятку «Как подготовиться к консультации»</a></p>
+<p><a href="/preparation">Подробно: как подготовиться к консультации →</a> · <a href="/pamyatka-k-konsultacii.txt" download data-goal="memo_download">скачать памятку</a></p>
 <h2>Что не входит и не решается онлайн</h2>{ul(NOT_ONLINE_COMMON)}
 <h2>Перенос и отмена</h2><p>{e(SERVICE['cancel_policy'])}</p>
 <h2>Повторная консультация</h2><p>{e(SERVICE['repeat'])}</p>
+{not_my_field_block()}
+{videos_block()}
 {booking_form()}
 <p>Или напишите: {messengers()}</p>
 {doctor_block()}"""
@@ -291,12 +299,17 @@ def build_consultation():
 
 
 def build_direction(d):
+    tools_map = {"insulin-resistance": ("/calculators/homa-ir", "Калькулятор HOMA-IR"), "weight": ("/calculators/bmi", "Калькулятор ИМТ"),
+                 "nutrition": ("/calculators/bmr", "Калькулятор базового обмена"), "thyroid": ("/analizy/ttg", "Разбор анализа на ТТГ"),
+                 "diabetes": ("/analizy/glikirovannyj-gemoglobin", "Разбор анализа HbA1c")}
+    t = tools_map.get(d["slug"])
+    tools = f'<div class="card"><p>Полезно перед консультацией: <a href="{t[0]}">{t[1]}</a> · <a href="/preparation">как подготовиться</a></p></div>' if t else ""
     body = f"""{byline()}
 <h2>Если вас беспокоит</h2>{ul(d['symptoms'])}
 <p class="note">Перечисленное — не признаки конкретного заболевания и не повод ставить себе диагноз. Это ситуации, с которыми обращаются к врачу.</p>
 <h2>Какие обследования могут понадобиться</h2>{ul(d['exams'])}
 <p>Это ориентир, а не назначение: нужный перечень врач обсудит с вами на консультации.</p>
-<h2>Как проходит консультация</h2><p>{e(d['how'])}</p>
+<h2>Как проходит консультация</h2><p>{e(d['how'])}</p>{tools}
 <h2>Что не решается онлайн</h2>{ul(d['not_online'] + NOT_ONLINE_COMMON)}
 {price_block()}
 {doctor_block()}
@@ -412,6 +425,165 @@ def build_service_files(indexable):
     (DIST / "robots.txt").write_text(f"User-agent: *\nDisallow: /thanks\nAllow: /\n\nSitemap: {url('/sitemap.xml')}\n", encoding="utf-8")
 
 
+# ---------- дополнительные разделы ----------
+
+def not_my_field_block():
+    rows = "".join(f"<li>{e(a)} → <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)
+    return f"""<h2 id="not-my-field">Чем я не занимаюсь</h2>
+<p>Есть вопросы, которые лучше решит другой специалист. В таких случаях я честно скажу об этом и подскажу, к кому обратиться.</p><ul>{rows}</ul>"""
+
+
+def videos_block():
+    cards = []
+    schema = []
+    for v in VIDEOS:
+        if v["src"]:
+            if v["src"].endswith(".mp4"):
+                media = f'<video controls preload="none" poster="{v["poster"]}" width="640" height="360" style="width:100%;height:auto"><source src="{v["src"]}" type="video/mp4"></video>'
+            else:
+                media = f'<p><a href="{v["src"]}" rel="noopener">Смотреть видео →</a></p>'
+            schema.append({"@context": "https://schema.org", "@type": "VideoObject", "name": v["title"], "contentUrl": url(v["src"]) if v["src"].startswith("/") else v["src"],
+                           "thumbnailUrl": url(v["poster"]) if v["poster"] else url("/img/og-doctor.jpg"), "uploadDate": UPDATED, "duration": v["duration"] or None})
+        else:
+            media = '<p><mark class="todo">[УТОЧНИТЬ: видео 1–2 минуты]</mark></p>'
+        cards.append(f'<div class="card"><h3>{e(v["title"])}</h3>{media}</div>')
+    return f'<h2>Видео: познакомьтесь с врачом</h2><div class="grid three">{"".join(cards)}</div>' + "".join(ld(s) for s in schema)
+
+
+def lead_form():
+    action = FORM_ACTION or "/materials/thanks"
+    return f"""<form id="materials-form" class="card" method="post" action="{action}" data-goal="lead_materials">
+<h2>Получить материалы</h2>
+<p>Оставьте контакт — пришлём ссылки на все материалы. Без рассылок и спама: только материалы и, если захотите, напоминание о записи.</p>
+<label for="m-name">Имя</label><input id="m-name" name="name" required autocomplete="given-name">
+<label for="m-contact">Telegram, WhatsApp или e-mail</label><input id="m-contact" name="contact" required>
+<label class="consent"><input type="checkbox" name="consent" required>
+<span>Я даю <a href="/privacy#consent">согласие на обработку персональных данных</a>.</span></label>
+<input type="hidden" name="source" value="materials">
+<p><button class="btn" type="submit">Получить материалы</button></p>
+</form>"""
+
+
+def materials_teaser():
+    return """<div class="card"><h2>Бесплатные материалы</h2><p>Чек-лист анализов, шаблон дневника питания и список вопросов врачу.</p>
+<a class="btn ghost" href="/materials">Получить материалы</a></div>"""
+
+
+def build_preparation():
+    labs = "".join(f"<tr><td>{e(n)}</td><td>{e(w)}</td></tr>" for n, w in PREP_LABS)
+    body = f"""{byline()}
+<p>Хорошая подготовка делает консультацию в разы полезнее: врач тратит время на разбор, а не на сбор информации.</p>
+<h2>Какие анализы иметь на руках</h2>
+<p>Это ориентир, а не назначение. Если анализов нет — консультация всё равно возможна: врач подскажет, с чего начать.</p>
+<div class="table"><table><thead><tr><th>Анализ</th><th>Когда полезен</th></tr></thead><tbody>{labs}</tbody></table></div>
+<p>Подробнее о каждом показателе — в разделе <a href="/analizy">«Разбор анализов»</a>.</p>
+<h2>Когда и как сдавать</h2>{ul(PREP_TIMING)}
+<h2>В каком виде присылать</h2>{ul(PREP_FORMAT)}
+<h2>Список препаратов</h2><p>{e(PREP_MEDS)}</p>
+<h2>Дневник питания</h2><p>{e(PREP_DIARY)}</p>
+<h2>Вопросы</h2><p>Запишите вопросы заранее — во время разговора их легко забыть. Готовый список — в <a href="/materials">материалах</a>.</p>
+{materials_teaser()}
+{price_block()}"""
+    faq = [("Какие анализы нужны эндокринологу?", "Чаще всего полезны ТТГ, свободный Т4, глюкоза натощак и гликированный гемоглобин. Точный перечень зависит от жалоб."),
+           ("За сколько дней сдавать анализы?", "Не раньше чем за 1–2 месяца до консультации, чтобы результаты были актуальны."),
+           ("Можно ли прислать фото вместо PDF?", "Да, если на фото виден весь бланк с датой и референсными значениями.")]
+    page("/preparation", "Подготовка к консультации",
+         "Какие анализы нужны эндокринологу, за сколько дней сдавать, в каком виде присылать, как составить список препаратов и дневник питания. Подготовьтесь.",
+         body + faq_block(faq), "Как подготовиться к консультации эндокринолога", [faq_ld(faq)], [("Подготовка", "/preparation")])
+
+
+def build_materials():
+    items = "".join(f'<div class="card"><h3>{e(m["title"])}</h3><p>{e(m["about"])}</p></div>' for m in MATERIALS)
+    page("/materials", "Чек-листы и памятки от эндокринолога",
+         "Бесплатно: чек-лист анализов перед визитом к эндокринологу, шаблон дневника питания и список вопросов врачу. Оставьте контакт и получите материалы.",
+         f'<div class="grid three">{items}</div>{lead_form()}{disclaimer_block()}', "Бесплатные материалы для подготовки к консультации", [], [("Материалы", "/materials")])
+    links = "".join(f'<li><a href="/files/{m["file"]}" download data-goal="memo_download">{e(m["title"])}</a></li>' for m in MATERIALS)
+    page("/materials/thanks", "Материалы", "Ссылки на материалы.",
+         f"<p>Спасибо! Скачайте материалы:</p><ul>{links}</ul>{price_block()}", "Ваши материалы", [], [("Материалы", "/materials"), ("Скачать", "/materials/thanks")])
+    files = DIST / "files"
+    files.mkdir(exist_ok=True)
+    head = f"{DOCTOR['name']}, {DOCTOR['specialty']}\n{url('/')}\n\n"
+    tail = f"\n{DISCLAIMER}\n{CONTRAINDICATIONS}\n"
+    (files / "chek-list-analizov.txt").write_text(
+        "Чек-лист анализов перед первым визитом к эндокринологу\n" + head + "".join(f"[ ] {n} — {w}\n" for n, w in PREP_LABS)
+        + "\nКак сдавать:\n" + "".join(f"- {t}\n" for t in PREP_TIMING) + "\nЭто ориентир, а не назначение. Перечень зависит от жалоб.\n" + tail, encoding="utf-8")
+    rows = "День;Время;Что съели/выпили;Количество;Самочувствие (голод, сонливость, тяга к сладкому)\n" + "".join(f"{d};;;;\n" for d in range(1, 8) for _ in range(5))
+    (files / "dnevnik-pitaniya-shablon.csv").write_text("﻿" + rows, encoding="utf-8")
+    (files / "voprosy-vrachu.txt").write_text("Список вопросов врачу\n" + head + "".join(f"[ ] {q}\n" for q in QUESTIONS_TO_DOCTOR) + "\nМои вопросы:\n1.\n2.\n3.\n" + tail, encoding="utf-8")
+
+
+CALCS = [
+    {"slug": "bmi", "name": "Калькулятор индекса массы тела (ИМТ)", "seo": "Калькулятор ИМТ онлайн", "nav": "Индекс массы тела",
+     "description": "Рассчитайте индекс массы тела (ИМТ) по росту и весу и узнайте, как его трактует ВОЗ и почему ИМТ — лишь один из показателей. Калькулятор врача.",
+     "fields": [("weight", "Вес, кг"), ("height", "Рост, см")],
+     "about": "<p>ИМТ = вес (кг) / рост² (м). Классификация ВОЗ: менее 18,5 — ниже нормы, 18,5–24,9 — норма, 25–29,9 — избыточная масса тела, 30 и более — ожирение.</p><p>ИМТ не учитывает соотношение мышц и жира, распределение жира и возраст. У спортсменов он может быть завышен, у пожилых — занижен. Это ориентир, а не диагноз.</p>",
+     "related": "/weight"},
+    {"slug": "bmr", "name": "Калькулятор базового обмена веществ", "seo": "Калькулятор базового обмена", "nav": "Базовый обмен",
+     "description": "Рассчитайте базовый обмен веществ по формуле Миффлина — Сан Жеора: сколько калорий организм тратит в покое. Онлайн-калькулятор от врача-диетолога.",
+     "fields": [("weight", "Вес, кг"), ("height", "Рост, см"), ("age", "Возраст, лет")], "sex": True,
+     "about": "<p>Базовый обмен — энергия, которую организм тратит в покое на дыхание, кровообращение, работу органов. Формула Миффлина — Сан Жеора: 10 × вес + 6,25 × рост − 5 × возраст + 5 (мужчины) или −161 (женщины).</p><p>Это оценка: реальный расход зависит от состава тела, активности, гормонального фона. Не используйте результат для жёстких диет.</p>",
+     "related": "/nutrition"},
+    {"slug": "homa-ir", "name": "Калькулятор индекса HOMA-IR", "seo": "Калькулятор HOMA-IR онлайн", "nav": "HOMA-IR",
+     "description": "Рассчитайте индекс инсулинорезистентности HOMA-IR по глюкозе и инсулину натощак. Объясняем, как понимать результат и почему нет единой нормы.",
+     "fields": [("glucose", "Глюкоза натощак, ммоль/л"), ("insulin", "Инсулин натощак, мкЕд/мл")],
+     "about": "<p>HOMA-IR = глюкоза (ммоль/л) × инсулин (мкЕд/мл) / 22,5. Оба анализа сдаются одновременно, строго натощак.</p><p>Единого порога для HOMA-IR нет: в исследованиях используют разные значения. Индекс — дополнительный ориентир, его оценивают вместе с жалобами, весом, другими анализами. <a href=\"/analizy/homa-ir\">Подробнее об индексе</a>.</p>",
+     "related": "/insulin-resistance"},
+]
+CALC_KEY = {"bmi": "bmi", "bmr": "bmr", "homa-ir": "homa"}
+
+
+def build_calculators():
+    cards = "".join(f'<div class="card"><h2><a href="/calculators/{c["slug"]}">{e(c["nav"])}</a></h2><p>{e(c["description"])}</p></div>' for c in CALCS)
+    page("/calculators", "Калькуляторы ИМТ и HOMA-IR",
+         "Онлайн-калькуляторы от врача-эндокринолога: индекс массы тела, базовый обмен веществ и индекс инсулинорезистентности HOMA-IR. С пояснениями.",
+         f'<div class="grid three">{cards}</div>{disclaimer_block()}', "Медицинские калькуляторы", [], [("Калькуляторы", "/calculators")])
+    for c in CALCS:
+        fields = "".join(f'<label for="c-{n}">{l}</label><input id="c-{n}" name="{n}" inputmode="decimal" required>' for n, l in c["fields"])
+        if c.get("sex"):
+            fields += '<label for="c-sex">Пол</label><select id="c-sex" name="sex"><option value="f">Женский</option><option value="m">Мужской</option></select>'
+        rel = next(d for d in DIRECTIONS if "/" + d["slug"] == c["related"])
+        body = f"""{byline()}
+<form class="card calc" data-calc="{CALC_KEY[c['slug']]}">{fields}
+<p><button class="btn" type="submit">Рассчитать</button></p><output aria-live="polite"></output></form>
+<h2>Как считается и как понимать результат</h2>{c['about']}
+<p class="note">Калькулятор не ставит диагноз. Результат — повод для разговора с врачом, а не для самостоятельных выводов.</p>
+<p>Связанное направление: <a href="{c['related']}">{e(rel['nav'])}</a>.</p>
+{price_block()}<script src="/calc.js" defer></script>"""
+        schema = {"@context": "https://schema.org", "@type": "MedicalWebPage", "url": url(f"/calculators/{c['slug']}"), "name": c["name"],
+                  "lastReviewed": UPDATED, "reviewedBy": physician_ref(), "author": physician_ref()}
+        page(f"/calculators/{c['slug']}", c["seo"], c["description"], body, c["name"], [schema],
+             [("Калькуляторы", "/calculators"), (c["nav"], f"/calculators/{c['slug']}")])
+
+
+def build_analyses():
+    by = {a["slug"]: a for a in ANALYSES}
+    cards = "".join(f'<div class="card"><h2><a href="/analizy/{a["slug"]}">{e(a["name"])}</a></h2><p>{e(a["what"])}</p></div>' for a in ANALYSES)
+    page("/analizy", "Разбор анализов: ТТГ, глюкоза",
+         "Что показывают ТТГ, свободный Т4, антитела к ТПО, глюкоза, HbA1c, инсулин, HOMA-IR и витамин D. Понятные разборы анализов от врача-эндокринолога.",
+         f'<p>Что показывает каждый анализ, когда его сдают и что делать с результатом. Без диагнозов и назначений: результаты всегда оценивает врач.</p><div class="grid">{cards}</div>',
+         "Разбор анализов: что показывают и что делать дальше", [], [("Анализы", "/analizy")])
+    for a in ANALYSES:
+        path = f"/analizy/{a['slug']}"
+        rel = "".join(f'<li><a href="/analizy/{s}">{e(by[s]["name"])}</a></li>' for s in a["related"])
+        calc = f'<p><a class="btn ghost" href="{a["calc"]}">Рассчитать в калькуляторе</a></p>' if a.get("calc") else ""
+        body = f"""{byline()}
+<h2>Что показывает</h2><p>{e(a['what'])}</p>{calc}
+<h2>Когда сдают</h2>{ul(a['when'])}
+<h2>Почему «норма» — не всегда ответ</h2><p>{e(a['norm'])}</p>
+<h2>Что делать дальше</h2><p>{e(a['next'])}</p>
+<p>Как подготовиться к сдаче — на странице <a href="/preparation">«Подготовка к консультации»</a>.</p>
+<h2>Связанные анализы</h2><ul>{rel}</ul>
+{disclaimer_block()}
+{price_block()}"""
+        schema = {"@context": "https://schema.org", "@type": "MedicalWebPage", "url": url(path), "name": a["name"],
+                  "about": {"@type": "MedicalTest", "name": a["name"]}, "specialty": "Endocrine",
+                  "lastReviewed": UPDATED, "datePublished": PUBLISHED, "dateModified": UPDATED,
+                  "reviewedBy": physician_ref(), "author": physician_ref()}
+        page(path, a["seo"], a["description"], body, f"{a['name']}: что показывает анализ", [schema],
+             [("Анализы", "/analizy"), (a["name"], path)])
+
+
+
 def check(strict):
     problems, warnings = [], []
     titles, descs = {}, {}
@@ -425,9 +597,9 @@ def check(strict):
         if desc in descs:
             problems.append(f"{path}: description совпадает с {descs[desc]}")
         titles[title], descs[desc] = path, path
-        if not 140 <= len(desc) <= 160 and path != "/thanks":
+        if not 140 <= len(desc) <= 160 and not path.endswith("thanks"):
             warnings.append(f"{path}: description {len(desc)} знаков (нужно 140–160)")
-        if not 50 <= len(title) <= 65 and path != "/thanks":
+        if not 50 <= len(title) <= 65 and not path.endswith("thanks"):
             warnings.append(f"{path}: title {len(title)} знаков (нужно 50–65)")
         text = re.sub(r"<[^>]+>", " ", doc).lower()
         for pat in FORBIDDEN:
@@ -459,9 +631,10 @@ def main():
     for d in DIRECTIONS:
         build_direction(d)
     build_faq(); build_reviews(); build_documents(); build_blog(); build_contacts(); build_legal(); build_thanks()
+    build_preparation(); build_materials(); build_calculators(); build_analyses()
     memo = "Как подготовиться к онлайн-консультации\n" + DOCTOR["name"] + ", " + DOCTOR["specialty"] + "\n\nПодготовьте:\n" + "".join(f"- {x}\n" for x in CONSULT_PREPARE) + "\n" + DISCLAIMER + "\n" + CONTRAINDICATIONS + "\n" + url("/consultation") + "\n"
     (DIST / "pamyatka-k-konsultacii.txt").write_text(memo, encoding="utf-8")
-    build_service_files([p for p, *_ in PAGES if p != "/thanks"])
+    build_service_files([p for p, *_ in PAGES if not p.endswith("thanks")])
     check(strict)
 
 
