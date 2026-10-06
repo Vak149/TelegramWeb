@@ -233,6 +233,7 @@ def build_home():
     members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
     hero = f"""<div class="home-hero blue grain on-blue">{MOL}{CURVE}<span class="curve-label" aria-hidden="true">суточный ритм кортизола</span>
 <div class="wrap hero-grid"><div>
+<div class="m-doc"><img src="{d['photo']}" width="64" height="64" alt="" aria-hidden="true"><span><b>{e(d['name'])}</b>{e(d['specialty'])}</span></div>
 <span class="kicker">Онлайн-консультация по видеосвязи</span>
 <h1>Эндокринолог и диетолог онлайн: понятно о гормонах, анализах и питании</h1>
 <p class="lead">Разбираю ваши жалобы и результаты обследований, объясняю, что они значат, и подсказываю следующий шаг.</p>
@@ -274,6 +275,7 @@ def build_home_blank():
     alt = f"{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"
     members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
     hero = f"""<div class="home-hero"><div class="wrap hero-grid"><div>
+<div class="m-doc"><img src="{d['photo']}" width="64" height="64" alt="" aria-hidden="true"><span><b>{e(d['name'])}</b>{e(d['specialty'])}</span></div>
 <span class="kicker">Онлайн-консультация · видеосвязь</span>
 <h1>Эндокринолог и диетолог онлайн: разберём <em>ваши анализы</em> и питание</h1>
 <p class="lead">Объясняю, что показывают результаты, какие обследования стоит пройти и к кому обратиться очно.</p>

@@ -100,3 +100,5 @@ main details summary::after{font-family:var(--mono)}
 /* подвал */
 footer.site{background:var(--sheet);color:var(--ink-2);border-top:1px solid var(--line)}
 footer.site a{color:var(--blue)!important}
+@media(max-width:899px){.m-doc img{box-shadow:0 0 0 3px var(--line)}.m-doc span{opacity:1;color:var(--ink-2)}.m-doc b{color:var(--ink)}}
+@media(max-width:699px){.home-hero h1{font-size:clamp(30px,8.4vw,40px)}.steps{gap:16px}}
