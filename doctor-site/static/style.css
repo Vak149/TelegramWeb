@@ -10,7 +10,7 @@
 :root[data-theme="dark"]{--bg:#0c1426;--tint:#132044;--ink:#e8eefc;--ink-2:#a6b3cf;--line:#22325a;--todo-bg:#22346b;--todo-fg:#d6e2ff;--input-bg:#0f1a33;--input-line:#33477a;color-scheme:dark}
 
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
 html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--sans);padding-bottom:76px}
 @media(min-width:900px){body{padding-bottom:0}}

@@ -141,7 +141,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 </head>
 <body>
 <header class="site"><div class="bar">
-<a class="brand" href="/"><span class="mark" aria-hidden="true">{e(plain(DOCTOR['short_name'])[:1])}</span><span>{e(DOCTOR['short_name'])}<small>эндокринолог · диетолог</small></span></a>
+<a class="brand" href="/"><span class="mark" aria-hidden="true">{e(plain(DOCTOR['short_name'])[:1])}</span><span>{e(DOCTOR['short_name'])}</span></a>
 <nav class="main" aria-label="Основное меню">{nav}</nav>
 <div class="actions"><a class="btn small" href="/consultation#booking" data-goal="cta_header">Записаться</a>
 <details class="menu"><summary aria-label="Меню">Меню</summary><nav aria-label="Меню">{nav}</nav></details></div>
@@ -157,6 +157,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <p><a href="/privacy">Политика обработки персональных данных</a> · <a href="/offer">Публичная оферта</a> · <a href="/contacts">Контакты</a></p>
 </div></footer>
 <div class="sticky-cta"><a class="btn" href="/consultation#booking" data-goal="cta_sticky">Записаться на консультацию · {price()}</a></div>
+<script>document.addEventListener("click",function(e){{var m=document.querySelector(".menu[open]");if(m&&!m.contains(e.target))m.open=false}});</script>
 {ld(org_ld())}
 {metrika()}
 </body>
@@ -195,6 +196,8 @@ def doctor_block():
 
 
 def byline(published=PUBLISHED, updated=UPDATED):
+    # Видимая подпись убрана по просьбе клиента; автор и даты остаются в микроразметке (Article, MedicalWebPage).
+    return ""
     return (f'<p class="byline">Автор: <a href="/about" rel="author">{e(DOCTOR["name"])}</a>, {e(DOCTOR["specialty"])}<br>'
             f'Опубликовано: <time datetime="{published}">{published}</time> · '
             f'Обновлено: <time datetime="{updated}">{updated}</time></p>')
@@ -234,7 +237,6 @@ def build_home():
     hero = f"""<div class="home-hero blue grain on-blue">{MOL}{CURVE}<span class="curve-label" aria-hidden="true">суточный ритм кортизола</span>
 <div class="wrap hero-grid"><div>
 <div class="m-doc"><img src="{d['photo']}" width="64" height="64" alt="" aria-hidden="true"><span><b>{e(d['name'])}</b>{e(d['specialty'])}</span></div>
-<span class="kicker">Онлайн-консультация по видеосвязи</span>
 <h1>Эндокринолог и диетолог онлайн: понятно о гормонах, анализах и питании</h1>
 <p class="lead">Разбираю ваши жалобы и результаты обследований, объясняю, что они значат, и подсказываю следующий шаг.</p>
 <div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться · {price()}</a><a class="btn ghost" href="/about">О враче</a></div>
@@ -276,7 +278,6 @@ def build_home_blank():
     members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
     hero = f"""<div class="home-hero"><div class="wrap hero-grid"><div>
 <div class="m-doc"><img src="{d['photo']}" width="64" height="64" alt="" aria-hidden="true"><span><b>{e(d['name'])}</b>{e(d['specialty'])}</span></div>
-<span class="kicker">Онлайн-консультация · видеосвязь</span>
 <h1>Эндокринолог и диетолог онлайн: разберём <em>ваши анализы</em> и питание</h1>
 <p class="lead">Объясняю, что показывают результаты, какие обследования стоит пройти и к кому обратиться очно.</p>
 <div class="cta"><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию →</a><a class="btn ghost" href="/about">О враче</a></div>
