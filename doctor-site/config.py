@@ -8,8 +8,8 @@
 SITE_URL = "https://example-doctor.ru"  # TODO: собственный домен .ru
 
 DOCTOR = {
-    "name": "[УТОЧНИТЬ: ФИО врача]",
-    "short_name": "[УТОЧНИТЬ: Фамилия И. О.]",
+    "name": "Катаева Дарья Альбертовна",
+    "short_name": "Катаева Д. А.",
     "specialty": "врач-эндокринолог, диетолог",
     "photo": "/img/doctor.webp",  # TODO: профессиональная фотография, WebP
     "practice_since": "[УТОЧНИТЬ: год]",

@@ -25,7 +25,8 @@ h3{font-size:19px;margin:24px 0 8px}
 .crumbs a{color:var(--muted)}
 .hero{display:grid;gap:24px;align-items:center}
 @media(min-width:760px){.hero{grid-template-columns:1fr 300px}}
-.hero .photo{aspect-ratio:4/5;background:var(--note);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:16px}
+.hero img.photo{object-fit:cover;width:100%;max-width:300px}
+.hero .photo{aspect-ratio:5/7;background:var(--note);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:16px}
 .badges{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:16px 0}
 .badges li{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}

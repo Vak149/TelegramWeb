@@ -88,7 +88,23 @@ NAV = [("/consultation", "Консультация"), ("/about", "О враче"
        ("/reviews", "Отзывы"), ("/blog", "Статьи"), ("/faq", "Вопросы"), ("/contacts", "Контакты")]
 
 
+SEO_Q = {
+    "/": "Эндокринолог и диетолог онлайн", "/about": "Врач, образование и опыт",
+    "/consultation": "Онлайн-консультация, цена", "/thyroid": "Щитовидная железа онлайн",
+    "/diabetes": "Диабет и преддиабет онлайн", "/insulin-resistance": "Инсулинорезистентность онлайн",
+    "/weight": "Лишний вес: консультация онлайн", "/hormones": "Гормональные нарушения онлайн",
+    "/nutrition": "Диетолог онлайн: питание", "/faq": "Вопросы о консультации",
+    "/reviews": "Отзывы о консультациях", "/documents": "Дипломы и сертификаты врача",
+    "/blog": "Статьи об анализах и гормонах", "/contacts": "Контакты и реквизиты врача",
+    "/privacy": "Политика обработки ПД сайта", "/offer": "Публичная оферта на консультации",
+    "/blog/kogda-onlajn-format-ne-podhodit": "Когда онлайн-формат не подходит",
+    "/blog/kakie-analizy-sdat-pered-konsultaciej-endokrinologa": "Анализы перед консультацией",
+    "/blog/kak-prohodit-onlajn-konsultaciya-endokrinologa": "Как проходит онлайн-консультация",
+}
+
+
 def page(path, title, description, body, h1, schema=(), trail=None, og_type="website"):
+    title = SEO_Q.get(path, title)
     full_title = f"{title} — {DOCTOR['specialty'].split(',')[0].replace('врач-', '')} {plain(DOCTOR['short_name'])}".strip()
     crumbs = breadcrumbs(trail) if trail else ""
     nav = "".join(f'<a href="{p}">{n}</a>' for p, n in NAV)
@@ -206,7 +222,7 @@ def build_home():
 <p class="price">{price()} <small>за консультацию</small></p>
 <p><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию</a> <a class="btn ghost" href="/about">О враче</a></p>
 </div>
-<img class="photo" src="{DOCTOR['photo']}" width="300" height="375" alt="{html.escape(plain(DOCTOR['name']) or 'Врач')}, {DOCTOR['specialty']}" fetchpriority="high">
+<img class="photo" src="{DOCTOR['photo']}" width="300" height="420" alt="{html.escape(plain(DOCTOR['name']) or 'Врач')}, {DOCTOR['specialty']}" fetchpriority="high">
 </div>
 <h2>С какими вопросами обращаются</h2><div class="grid three">{dirs}</div>
 <h2>Что входит в консультацию</h2>{ul(CONSULT_INCLUDES)}
@@ -228,7 +244,7 @@ def build_about():
     body = f"""<div class="hero"><div>
 <p><strong>{e(d['specialty'])}</strong>. Практика с {e(d['practice_since'])} года.</p>
 <blockquote>{e(d['credo'])}</blockquote></div>
-<img class="photo" src="{d['photo']}" width="300" height="375" alt="{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"></div>
+<img class="photo" src="{d['photo']}" width="300" height="420" alt="{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"></div>
 <h2>Образование</h2><ul>{edu}</ul>
 <h2>Сертификаты и аккредитация</h2><ul>{certs}</ul>
 <h2>Места работы</h2>{ul(d['workplaces'])}
