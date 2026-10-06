@@ -131,10 +131,11 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 {"".join(ld(s) for s in schema)}
 </head>
 <body>
-<header class="site"><div class="wrap">
-<a class="brand" href="/">{e(DOCTOR['short_name'])}<small>{e(DOCTOR['specialty'])}</small></a>
+<header class="site"><div class="bar">
+<a class="brand" href="/"><span class="mark" aria-hidden="true">{e(plain(DOCTOR['short_name'])[:1])}</span><span>{e(DOCTOR['short_name'])}<small>эндокринолог · диетолог</small></span></a>
 <nav class="main" aria-label="Основное меню">{nav}</nav>
-<a class="btn small" href="/consultation#booking" data-goal="cta_header">Записаться</a>
+<div class="actions"><a class="btn small" href="/consultation#booking" data-goal="cta_header">Записаться</a>
+<details class="menu"><summary aria-label="Меню">Меню</summary><nav aria-label="Меню">{nav}</nav></details></div>
 </div></header>
 <main><div class="wrap">
 {crumbs}
@@ -361,7 +362,7 @@ def build_documents():
 
 
 def build_blog():
-    lst = "".join(f'<div class="card"><h2><a href="/blog/{a["slug"]}">{e(a["title"])}</a></h2><p>{e(a["description"])}</p></div>' for a in ARTICLES)
+    lst = '<div class="posts">' + "".join(f'<a class="post" href="/blog/{a["slug"]}"><h2>{e(a["title"])}</h2><p>{e(a["description"])}</p><span class="more">Читать →</span></a>' for a in ARTICLES) + "</div>"
     page("/blog", "Статьи эндокринолога и диетолога: анализы, гормоны, питание",
          "Понятные разборы от врача-эндокринолога и диетолога: какие анализы сдать, как проходит онлайн-консультация, когда нужен очный приём. Читайте статьи.",
          lst, "Статьи врача-эндокринолога и диетолога", [], [("Статьи", "/blog")])
