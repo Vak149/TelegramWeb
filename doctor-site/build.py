@@ -235,38 +235,68 @@ def build_home():
     alt = f"{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"
     members = "".join(f'<a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>' for m in d["memberships"])
     hero = f"""<div class="home-hero blue grain on-blue">{MOL}{CURVE}<span class="curve-label" aria-hidden="true">суточный ритм кортизола</span>
-<div class="wrap hero-grid"><div>
-<div class="m-doc"><img src="{d['photo']}" width="64" height="64" alt="" aria-hidden="true"><span><b>{e(d['name'])}</b>{e(d['specialty'])}</span></div>
-<h1>Эндокринолог и диетолог онлайн: понятно о гормонах, анализах и питании</h1>
+<div class="wrap hero-grid"><div class="hero-text">
+<h1><span class="h1-pre">Эндокринолог и диетолог онлайн:</span> понятно о гормонах, <span class="squiggle">анализах</span> и питании</h1>
 <p class="lead">Разбираю ваши жалобы и результаты обследований, объясняю, что они значат, и подсказываю следующий шаг.</p>
-<div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться · {price()}</a><a class="btn ghost" href="/about">О враче</a></div>
+<div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться<span class="d-only">&nbsp;· {price()}</span></a><a class="btn ghost" href="/about">О враче</a></div>
 <div class="facts"><div><b>{price()}</b>консультация</div><div><b>{len(d['memberships'])}</b>международные ассоциации</div><div><b>онлайн</b>из любого города</div></div>
 </div>
-<div class="portrait"><img src="{d['photo']}" width="440" height="550" alt="{alt}" fetchpriority="high"></div>
+<div class="portrait"><img src="{d['photo']}" width="440" height="550" alt="{alt}" fetchpriority="high">
+<div class="pill m-only">{price()}<small>онлайн</small></div>
+<div class="tag m-only"><b>{e(d['name'])}</b>{e(d['specialty'])}</div></div>
 </div></div>
-<div class="trust"><div class="wrap"><span>Член ассоциаций:</span>{members}</div></div>"""
+<div class="trust d-only"><div class="wrap"><span>Член ассоциаций:</span>{members}</div></div>"""
     topics = "".join(f'<a class="topic" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="arr" aria-hidden="true">→</span></a>' for x in DIRECTIONS)
     labs = "".join(f'<a href="/analizy/{a["slug"]}">{e(a["name"].split(" (")[0])}</a>' for a in ANALYSES)
     calcs = "".join(f'<a href="/calculators/{c["slug"]}">{e(c["nav"])}</a>' for c in CALCS)
     dots = "".join(f"<li>{e(i[:1].upper() + i[1:])}</li>" for i in CONSULT_INCLUDES)
-    body = f"""<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2>
-<p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. Образование, сертификаты и подтверждение членства в ассоциациях — <a href="/documents">на странице документов</a>.</p></div>
-<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
-<span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С чем приходят на консультацию</h2>
-<div class="topics">{topics}</div>
+    # мобильные блоки
+    q_rows = [("ВУЗ", "Высшее медицинское образование", ", ".join(x for x in (d["education"][0]["what"], d["education"][0]["where"], d["education"][0]["year"])), "/documents#diploma", "диплом"),
+              ("ОРД", d["education"][1]["what"], f'{d["education"][1]["where"]}, {d["education"][1]["year"]}', "/documents#residency", "диплом")]
+    q_rows += [("АКК", c["what"], f'действует до {c["valid_until"]}', c["doc"], "документ") for c in d["certificates"]]
+    qual = "".join(f'<a class="q" href="{h}"><span class="ic">{ic}</span><span><b>{e(t)}</b><span>{e(s)}</span></span><span class="doc">{dl} →</span></a>' for ic, t, s, h, dl in q_rows)
+    socs = "".join(f'<a class="soc" href="{m["url"]}" rel="noopener"><b>{ab}</b><span>{ru}</span></a>' for m, ab, ru in zip(d["memberships"], ["ESE", "EASD", "ENDO"], ["Европейское общество эндокринологов", "Европейская ассоциация по изучению диабета", "Endocrine Society, США"]))
+    hexes = {"thyroid": "Т4", "diabetes": "A1c", "insulin-resistance": "HOMA", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
+    spark = '<svg viewBox="0 0 120 50" aria-hidden="true" focusable="false"><path d="M0,44 C20,42 26,30 36,12 C42,2 48,10 58,20 C74,34 96,36 120,40" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
+    rail = "".join(f'<a class="dcard" href="/{x["slug"]}"><span class="hex">{hexes.get(x["slug"], "")}</span><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">Подробнее →</span>{spark}</a>' for x in DIRECTIONS)
+    pick = ["ttg-v-norme-a-samochuvstvie-plohoe", "pochemu-ves-ne-uhodit-pri-deficite-kalorij", "insulinorezistentnost-priznaki", "kakie-analizy-sdat-pered-konsultaciej-endokrinologa"]
+    arts = "".join(f'<a href="/blog/{a["slug"]}"><b>{e(a.get("seo", a["title"]))}</b><span>{e(a["description"][:90].rsplit(" ", 1)[0])}…</span></a>' for s_ in pick for a in ARTICLES if a["slug"] == s_)
+    fq = "".join(f'<details class="fq"{" open" if i == 0 else ""}><summary>{e(q)}</summary><p>{e(a)}</p></details>' for i, (q, a) in enumerate([FAQ[4], FAQ[1], FAQ[3]]))
+    body = f"""<section class="qual m-only"><span class="kicker">Квалификация</span><h2>Каждое слово подтверждено документом</h2>
+<p class="sub">Дипломы, аккредитация и членство в обществах — сканы и ссылки на реестры.</p>
+<div class="qlist">{qual}</div><div class="socs">{socs}</div></section>
+<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2>
+<p class="d-only" style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. Образование, сертификаты и подтверждение членства в ассоциациях — <a href="/documents">на странице документов</a>.</p></div>
+<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote>
+<div class="approach m-only">
+<div class="ap"><i>КР</i><span><b>По клиническим рекомендациям</b>Опираюсь на рекомендации Минздрава и международных профессиональных обществ.</span></div>
+<div class="ap"><i>1:1</i><span><b>Ваши анализы, а не шаблон</b>Разбираю именно ваши результаты и историю здоровья.</span></div>
+<div class="ap"><i>!</i><span><b>Честно о границах</b>Скажу, когда нужен очный приём или другой специалист.</span></div></div></figure></div>
+<div class="d-only"><span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С чем приходят на консультацию</h2>
+<div class="topics">{topics}</div></div>
+<section class="m-band dirs-band blue grain m-only">{MOL}<span class="kicker">Направления</span><h2>С чем приходят</h2><div class="rail">{rail}</div></section>
 <div class="panel" id="consult"><div><span class="kicker">Онлайн-консультация</span><h2>Что вы получите</h2><ul class="dots">{dots}</ul></div>
 <div class="pricebox"><p class="price">{price()}<small>видеосвязь</small></p>
 <p style="margin:0;color:var(--ink-2);font-size:15px">Подготовьте анализы в PDF или фото, список препаратов и вопросы. Если анализов нет — подскажу, с чего начать. <a href="/preparation">Как подготовиться</a></p>
 <a class="btn" href="/consultation#booking" data-goal="cta_price">Записаться на консультацию</a>{disclaimer_block()}</div></div>
-<span class="kicker" style="margin-top:72px">Разбор анализов</span><h2 style="margin-top:12px">Что значит ваш результат</h2>
+<section class="m-band how-band grain m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
+<ol class="steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
+<li><i>2</i><span><b>Подготовка</b>Анализы в PDF или фото, список препаратов, дневник питания.</span></li>
+<li><i>3</i><span><b>Видеосвязь</b>Жалобы, история здоровья, разбор документов, ваши вопросы.</span></li>
+<li><i>4</i><span><b>Рекомендации</b>Какие обследования пройти, к кому обратиться очно, что изменить в питании.</span></li></ol>
+<a class="btn white" href="/preparation">Как подготовиться к консультации</a></section>
+<div class="d-only"><span class="kicker" style="margin-top:72px">Разбор анализов</span><h2 style="margin-top:12px">Что значит ваш результат</h2>
 <div class="chips">{labs}</div>
 <div class="two"><div class="card"><span class="kicker">Честно о формате</span><h3>Когда онлайн не подходит</h3>{ul(NOT_ONLINE_COMMON)}
 <p><a href="/blog/kogda-onlajn-format-ne-podhodit">Подробнее о границах формата →</a></p></div>
-<div class="card"><span class="kicker">Границы специальности</span><h3>Куда я направлю</h3><ul>{"".join(f"<li>{e(a)} — <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div>
-<div class="two"><div class="card blue grain">{CURVE}<span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
+<div class="card"><span class="kicker">Границы специальности</span><h3>Куда я направлю</h3><ul>{"".join(f"<li>{e(a)} — <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div></div>
+<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div></section>
+<section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
+<div class="two"><div class="card blue grain gift">{MOL}{CURVE}<span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
-<div class="card"><span class="kicker">Калькуляторы</span><h3>Посчитайте сами</h3><div class="chips">{calcs}</div></div></div>
-{videos_block()}"""
+<div class="card d-only"><span class="kicker">Калькуляторы</span><h3>Посчитайте сами</h3><div class="chips">{calcs}</div></div></div>
+<div class="d-only">{videos_block()}</div>
+<section class="m-band final-band grain m-only">{MOL}<span class="kicker">Запись</span><h2>Записаться на онлайн-консультацию</h2><a class="btn white" href="/consultation#booking" data-goal="cta_final">Записаться · {price()}</a></section>"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
          body, "", hero=hero)
