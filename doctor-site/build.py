@@ -11,7 +11,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from config import (CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
+from config import (CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
 from decor import CURVE, MOL
 from content_articles import MORE_ARTICLES
@@ -45,6 +45,10 @@ def plain(s):
 
 def url(path):
     return SITE_URL.rstrip("/") + path
+
+
+def rub(v):
+    return f"{v:,}".replace(",", "\u00a0") + "\u00a0₽"
 
 
 def price():
@@ -237,12 +241,12 @@ def build_home():
     hero = f"""<div class="home-hero blue grain on-blue">{MOL}{CURVE}<span class="curve-label" aria-hidden="true">суточный ритм кортизола</span>
 <div class="wrap hero-grid"><div class="hero-text">
 <h1><span class="h1-pre">Эндокринолог и диетолог онлайн:</span> понятно о гормонах, <span class="squiggle">анализах</span> и питании</h1>
-<p class="lead">Разбираю ваши жалобы и результаты обследований, объясняю, что они значат, и подсказываю следующий шаг.</p>
+<p class="lead">Обсудим жалобы, подробно разъясню результаты имеющихся исследований и подскажу дальнейшую тактику.</p>
 <div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться<span class="d-only">&nbsp;· {price()}</span></a><a class="btn ghost" href="/about">О враче</a></div>
-<div class="facts"><div><b>{price()}</b>консультация</div><div><b>{len(d['memberships'])}</b>международные ассоциации</div><div><b>онлайн</b>из любого города</div></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div><div><b>онлайн</b>из любого города</div></div>
 </div>
 <div class="portrait"><img src="{d['photo']}" width="440" height="550" alt="{alt}" fetchpriority="high">
-<div class="pill m-only">{price()}<small>онлайн</small></div>
+<div class="pill m-only">{price()}</div>
 <div class="tag m-only"><b>{e(d['name'])}</b>{e(d['specialty'])}</div></div>
 </div></div>
 <div class="trust d-only"><div class="wrap"><span>Член ассоциаций:</span>{members}</div></div>"""
@@ -280,6 +284,7 @@ def build_home():
 <p style="margin:0;color:var(--ink-2);font-size:15px">Подготовьте анализы в PDF или фото, список препаратов и вопросы. Если анализов нет — подскажу, с чего начать. <a href="/preparation">Как подготовиться</a></p>
 <a class="btn" href="/consultation#booking" data-goal="cta_price">Записаться на консультацию</a>{disclaimer_block()}</div></div>
 <section class="m-band how-band grain m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
+<p class="how-intro">{e(CONSULT_HOW)}</p>
 <ol class="steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
 <li><i>2</i><span><b>Подготовка</b>Анализы в PDF или фото, список препаратов, дневник питания.</span></li>
 <li><i>3</i><span><b>Видеосвязь</b>Жалобы, история здоровья, разбор документов, ваши вопросы.</span></li>
@@ -311,7 +316,7 @@ def build_home_blank():
 <h1>Эндокринолог и диетолог онлайн: разберём <em>ваши анализы</em> и питание</h1>
 <p class="lead">Объясняю, что показывают результаты, какие обследования стоит пройти и к кому обратиться очно.</p>
 <div class="cta"><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию →</a><a class="btn ghost" href="/about">О враче</a></div>
-<div class="facts"><div><b>{price()}</b>консультация</div><div><b>{len(d['memberships'])}</b>международные ассоциации</div><div><b>онлайн</b>из любого города</div></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div><div><b>онлайн</b>из любого города</div></div>
 </div>
 <div class="portrait"><img src="{d['photo']}" width="420" height="525" alt="{alt}" fetchpriority="high">
 <div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b><br>{e(d['specialty'])}</div></div>
@@ -379,11 +384,14 @@ def build_consultation():
     body = f"""{price_block()}
 <h2>Что входит</h2>{ul(CONSULT_INCLUDES)}
 <h2>Как проходит</h2>
+<p>{e(CONSULT_HOW)}</p>
 <ol><li>Вы оставляете заявку или пишете в мессенджер.</li><li>Вам подтверждают время и присылают ссылку ({e(SERVICE['platform'])}).</li>
 <li>Консультация по видеосвязи, {e(SERVICE['duration'])}.</li><li>После — письменные рекомендации [УТОЧНИТЬ: формат].</li></ol>
 <h2>Что подготовить</h2>{ul(CONSULT_PREPARE)}
 <p><a href="/preparation">Подробно: как подготовиться к консультации →</a> · <a href="/pamyatka-k-konsultacii.txt" download data-goal="memo_download">скачать памятку</a></p>
 <h2>Что не входит и не решается онлайн</h2>{ul(NOT_ONLINE_COMMON)}
+<div class="card blue grain" id="support">{MOL}<span class="kicker">Сопровождение</span><h3>{e(SUPPORT['name'])} — {rub(SUPPORT['price'])}</h3>
+<p>{e(SUPPORT['about'])}</p><a class="btn white" href="#booking" data-goal="cta_support">Записаться на сопровождение</a></div>
 <h2>Перенос и отмена</h2><p>{e(SERVICE['cancel_policy'])}</p>
 <h2>Повторная консультация</h2><p>{e(SERVICE['repeat'])}</p>
 {not_my_field_block()}
@@ -395,9 +403,12 @@ def build_consultation():
               "provider": physician_ref(), "areaServed": "RU", "url": url("/consultation"),
               "offers": {"@type": "Offer", "price": SERVICE["price"], "priceCurrency": "RUB", "url": url("/consultation"),
                          "availability": "https://schema.org/InStock"}}
+    schema2 = {"@context": "https://schema.org", "@type": "Service", "name": SUPPORT["name"], "description": SUPPORT["about"],
+               "provider": physician_ref(), "areaServed": "RU", "url": url("/consultation#support"),
+               "offers": {"@type": "Offer", "price": SUPPORT["price"], "priceCurrency": "RUB", "url": url("/consultation#support")}}
     page("/consultation", "Онлайн-консультация эндокринолога: цена и порядок",
          "Что входит в онлайн-консультацию эндокринолога и диетолога, как подготовиться и как проходит разговор. Цена 5 000 ₽. Оставьте заявку на удобное время.",
-         body, "Онлайн-консультация эндокринолога и диетолога", [schema], [("Консультация", "/consultation")])
+         body, "Онлайн-консультация эндокринолога и диетолога", [schema, schema2], [("Консультация", "/consultation")])
 
 
 def build_direction(d):

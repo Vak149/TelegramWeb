@@ -367,3 +367,9 @@ footer.site ul{columns:2;padding-left:18px}
   .final-band .mol{right:-60px;bottom:20px;width:300px;color:rgba(255,255,255,.12)}
   .final-band .btn{display:flex}
 }
+
+.facts a{color:inherit!important;text-decoration:none}
+.how-intro{font-size:15px;opacity:.88;margin:0 0 16px}
+#support h3{margin:10px 0 8px}
+#support p{opacity:.9}
+.btn .d-only{margin-left:-8px}
