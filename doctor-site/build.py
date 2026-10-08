@@ -243,7 +243,7 @@ def build_home():
 <h1><span class="h1-pre">Эндокринолог и диетолог онлайн:</span> понятно о гормонах, <span class="squiggle">анализах</span> и питании</h1>
 <p class="lead">Обсудим жалобы, подробно разъясню результаты имеющихся исследований и подскажу дальнейшую тактику.</p>
 <div class="cta"><a class="btn white" href="/consultation#booking" data-goal="cta_hero">Записаться<span class="d-only">&nbsp;· {price()}</span></a><a class="btn ghost" href="/about">О враче</a></div>
-<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div><div><b>онлайн</b>из любого города</div></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div></div>
 </div>
 <div class="portrait"><img src="{d['photo']}" width="440" height="550" alt="{alt}" fetchpriority="high">
 <div class="pill m-only">{price()}</div>
@@ -316,7 +316,7 @@ def build_home_blank():
 <h1>Эндокринолог и диетолог онлайн: разберём <em>ваши анализы</em> и питание</h1>
 <p class="lead">Объясняю, что показывают результаты, какие обследования стоит пройти и к кому обратиться очно.</p>
 <div class="cta"><a class="btn" href="/consultation#booking" data-goal="cta_hero">Записаться на консультацию →</a><a class="btn ghost" href="/about">О враче</a></div>
-<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div><div><b>онлайн</b>из любого города</div></div>
+<div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div></div>
 </div>
 <div class="portrait"><img src="{d['photo']}" width="420" height="525" alt="{alt}" fetchpriority="high">
 <div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b><br>{e(d['specialty'])}</div></div>
