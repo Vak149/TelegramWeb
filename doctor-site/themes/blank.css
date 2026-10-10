@@ -109,3 +109,34 @@ footer.site a{color:var(--blue)!important}
   .home-hero .hero-grid>div:first-child{display:contents}
   .home-hero .hero-grid>div:first-child>h1{order:1}
 }
+/* мобильные блоки главной в стиле «Бланк» */
+@media(max-width:899px){
+  .home-hero .portrait .pill{background:var(--blue);color:#fff}
+  .home-hero .portrait .tag{left:-10px;bottom:22px}
+  .qual h2,.m-sec h2,.m-band h2{font-family:var(--display);font-weight:300}
+  .q .ic{font-family:var(--mono);font-weight:500}
+  .q .doc{font-family:var(--mono);font-weight:500}
+  .soc b{font-family:var(--display);font-weight:500}
+  .dirs-band{background:#2f5bd3;color:#fff}
+  .dirs-band .kicker{color:rgba(255,255,255,.8)}
+  .dirs-band h2{color:#fff}
+  .dcard h3{font-family:var(--display);font-weight:500}
+  .dcard .go{font:500 13px var(--mono)}
+  .how-band{background:#152238;color:#fff}
+  .how-band h2{color:#fff}
+  .how-band .kicker{color:#9db6ff}
+  .how-band .steps li{border-top:1px solid rgba(255,255,255,.14);padding-top:14px}
+  .how-band .steps li::before{display:none}
+  .how-band .steps b{font-family:var(--display);font-weight:500;color:#fff}
+  .how-band .steps li>span{color:rgba(255,255,255,.85)}
+  .how-band .btn.white{background:#fff;color:#1f45b0!important}
+  .ap b{font-family:var(--display);font-weight:500}
+  .ap i{font-family:var(--mono);font-weight:500}
+  .arts b{font-family:var(--display);font-weight:500}
+  .arts a::after{font:500 13px var(--mono)}
+  .m-gift{margin-top:40px}
+  .m-gift .btn.white{background:#fff;color:#1f45b0!important}
+  .voice{border-block:1px solid var(--line)}
+}
+@media(max-width:899px){.home-hero .portrait img{margin-bottom:0}}
+.portrait .tag b{display:block}
