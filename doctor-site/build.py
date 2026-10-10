@@ -22,8 +22,8 @@ from content import (ARTICLES, CONSULT_INCLUDES, CONSULT_PREPARE, DIRECTIONS, FA
 
 ROOT = Path(__file__).parent
 ARTICLES = ARTICLES + MORE_ARTICLES
-THEME = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--theme=")), "yasnost")  # yasnost | blank
-DIST = ROOT / ("dist" if THEME == "yasnost" else f"dist-{THEME}")
+THEME = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--theme=")), "blank")  # blank (основной) | yasnost
+DIST = ROOT / ("dist" if THEME == "blank" else f"dist-{THEME}")
 FONTS = {
     "yasnost": "family=Manrope:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@1,7..72,400",
     "blank": "family=Unbounded:wght@300;500&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500",
