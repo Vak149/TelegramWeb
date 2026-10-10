@@ -11,7 +11,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from config import (CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
+from config import (NOT_MEDICAL, CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
 from decor import CURVE, MOL
 from content_articles import MORE_ARTICLES
@@ -110,7 +110,8 @@ SEO_Q = {
     "/nutrition": "Диетолог онлайн: питание", "/faq": "Вопросы о консультации",
     "/reviews": "Отзывы о консультациях", "/documents": "Дипломы и сертификаты врача",
     "/blog": "Статьи об анализах и гормонах", "/contacts": "Контакты и реквизиты врача",
-    "/privacy": "Политика обработки ПД сайта", "/offer": "Публичная оферта на консультации",
+    "/privacy": "Политика обработки ПД сайта", "/offer": "Публичная оферта на консультации", "/agreement": "Договор об оказании услуг врача",
+    "/legal": "Правовая информация и документы",
     "/blog/kogda-onlajn-format-ne-podhodit": "Когда онлайн-формат не подходит",
     "/blog/kakie-analizy-sdat-pered-konsultaciej-endokrinologa": "Анализы перед консультацией",
     "/blog/kak-prohodit-onlajn-konsultaciya-endokrinologa": "Как проходит онлайн-консультация",
@@ -158,7 +159,8 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <p><strong>Направления:</strong></p><ul>{dirs}</ul>
 <p>{e(LEGAL['form'])} {e(DOCTOR['name'])}, ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}. {e(LEGAL['address'])}. E-mail: {e(LEGAL['email'])}</p>
 <p>{e(DISCLAIMER)} {e(CONTRAINDICATIONS)}</p>
-<p><a href="/privacy">Политика обработки персональных данных</a> · <a href="/offer">Публичная оферта</a> · <a href="/contacts">Контакты</a></p>
+<p><strong>{e(NOT_MEDICAL)}</strong></p>
+<p><a href="/legal">Правовая информация</a> · <a href="/offer">Публичная оферта</a> · <a href="/agreement">Договор об оказании услуг</a> · <a href="/privacy">Политика обработки персональных данных</a> · <a href="/contacts">Контакты</a></p>
 </div></footer>
 <div class="sticky-cta"><a class="btn" href="/consultation#booking" data-goal="cta_sticky">Записаться на консультацию · {price()}</a></div>
 <script>document.addEventListener("click",function(e){{var m=document.querySelector(".menu[open]");if(m&&!m.contains(e.target))m.open=false}});</script>
@@ -180,7 +182,7 @@ def ul(items):
 
 
 def disclaimer_block():
-    return f'<p class="note">{e(DISCLAIMER)}<br>{e(CONTRAINDICATIONS)}</p>'
+    return f'<p class="note"><strong>{e(NOT_MEDICAL)}</strong><br>{e(DISCLAIMER)}<br>{e(CONTRAINDICATIONS)}</p>'
 
 
 def price_block():
@@ -226,7 +228,7 @@ def booking_form():
 <label for="f-time">Удобное время</label><input id="f-time" name="time" placeholder="например, будни после 18:00">
 <label for="f-msg">Кратко о вопросе</label><textarea id="f-msg" name="message" rows="4"></textarea>
 <label class="consent"><input type="checkbox" name="consent" required>
-<span>Я даю <a href="/privacy#consent">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="/offer">публичной офертой</a>.</span></label>
+<span>Я даю <a href="/privacy#consent">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="/offer">публичной офертой</a> и <a href="/agreement">договором об оказании услуг</a>.</span></label>
 <p><button class="btn" type="submit">Отправить заявку</button></p>
 <p class="note">Что дальше: в течение рабочего дня с вами свяжутся, подтвердят время и пришлют ссылку на видеосвязь.</p>
 </form>"""
@@ -393,6 +395,7 @@ def build_consultation():
 <div class="card blue grain" id="support">{MOL}<span class="kicker">Сопровождение</span><h3>{e(SUPPORT['name'])} — {rub(SUPPORT['price'])}</h3>
 <p>{e(SUPPORT['about'])}</p><a class="btn white" href="#booking" data-goal="cta_support">Записаться на сопровождение</a></div>
 <h2>Перенос и отмена</h2><p>{e(SERVICE['cancel_policy'])}</p>
+<p class="notice"><strong>{e(NOT_MEDICAL)}</strong> Условия — в <a href="/offer">публичной оферте</a> и <a href="/agreement">договоре об оказании услуг</a>.</p>
 <h2>Повторная консультация</h2><p>{e(SERVICE['repeat'])}</p>
 {not_my_field_block()}
 {videos_block()}
@@ -515,14 +518,43 @@ def build_legal():
          privacy, "Политика обработки персональных данных", [], [("Политика ПД", "/privacy")])
     offer = f"""<p class="note">Шаблон. Текст должен быть проверен юристом до публикации.</p>
 <h2>1. Стороны и предмет</h2><p>{e(LEGAL['form'])} {e(DOCTOR['name'])} (Исполнитель) оказывает информационно-консультационные услуги в онлайн-формате: {e(SERVICE['name'].lower())}.</p>
-<h2>2. Характер услуги</h2><p>{e(DISCLAIMER)} Исполнитель не ставит диагнозов, не назначает лекарственные препараты и не выдаёт медицинских документов в рамках онлайн-консультации.</p>
-<h2>3. Стоимость</h2><p>{price()} за одну консультацию длительностью {e(SERVICE['duration'])}.</p>
+<h2>2. Характер услуги</h2><p><strong>{e(NOT_MEDICAL)}</strong> {e(DISCLAIMER)} Исполнитель не ставит диагнозов, не назначает лекарственные препараты и не выдаёт медицинских документов в рамках онлайн-консультации.</p>
+<h2>3. Стоимость</h2><p>{price()} за одну консультацию длительностью {e(SERVICE['duration'])}. {e(SUPPORT['name'])} — {rub(SUPPORT['price'])}.</p>
 <h2>4. Перенос, отмена, возврат</h2><p>{e(SERVICE['cancel_policy'])}</p>
 <h2>5. Акцепт</h2><p>Акцептом оферты является оплата услуги. [УТОЧНИТЬ у юриста]</p>
-<h2>6. Реквизиты</h2><p>ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}, {e(LEGAL['address'])}.</p>"""
+<h2>6. Реквизиты</h2><p>ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}, {e(LEGAL['address'])}.</p>
+<p>Порядок оказания услуг подробно описан в <a href="/agreement">договоре об оказании информационно-консультационных услуг</a>.</p>"""
     page("/offer", "Публичная оферта на информационно-консультационные услуги",
          "Публичная оферта на оказание информационно-консультационных услуг врачом-эндокринологом и диетологом онлайн: предмет, стоимость, порядок отмены.",
-         offer, "Публичная оферта", [], [("Оферта", "/offer")])
+         offer, "Публичная оферта", [], [("Правовая информация", "/legal"), ("Оферта", "/offer")])
+    party = f"{e(LEGAL['form'])} {e(DOCTOR['name'])}"
+    agreement = f"""<p class="notice"><strong>{e(NOT_MEDICAL)}</strong></p>
+<p class="note">Шаблон. Текст должен быть проверен юристом до публикации.</p>
+<h2>1. Предмет договора</h2><p>{party} (Исполнитель) оказывает Заказчику информационно-консультационные услуги в онлайн-формате по вопросам эндокринологии и питания, а Заказчик оплачивает их на условиях договора. Виды услуг: {e(SERVICE['name'].lower())} — {price()}; {e(SUPPORT['name'].lower())} — {rub(SUPPORT['price'])}.</p>
+<h2>2. Характер услуг</h2><ul><li>{e(NOT_MEDICAL)}</li><li>{e(DISCLAIMER)}</li><li>Исполнитель не выдаёт рецептов, листков нетрудоспособности, медицинских заключений и справок.</li><li>Рекомендации носят информационный характер. Решения о диагностике и лечении принимает лечащий врач при очном приёме.</li></ul>
+<h2>3. Порядок оказания</h2><ul><li>Заказчик оставляет заявку на сайте или в мессенджере, стороны согласуют дату и время.</li><li>Консультация проводится по видеосвязи ({e(SERVICE['platform'])}), длительность — {e(SERVICE['duration'])}.</li><li>Заказчик заранее передаёт документы и сведения, необходимые для консультации, и отвечает за их достоверность.</li><li>Сопровождение длится 14 календарных дней с даты начала, общение — в согласованном мессенджере [УТОЧНИТЬ: формат и частота].</li></ul>
+<h2>4. Стоимость и оплата</h2><p>Стоимость услуг указана на сайте на дату оплаты. Услуга оплачивается до её оказания [УТОЧНИТЬ у юриста: порядок оплаты и чек].</p>
+<h2>5. Перенос, отмена и возврат</h2><p>{e(SERVICE['cancel_policy'])}</p>
+<h2>6. Обязанности Заказчика</h2><ul><li>При острых состояниях обращаться за экстренной медицинской помощью (103, 112), а не за консультацией.</li><li>Не заменять консультацией очное наблюдение у лечащего врача.</li><li>Не прекращать и не менять приём назначенных лечащим врачом препаратов без его ведома.</li></ul>
+<h2>7. Ответственность</h2><p>Исполнитель не несёт ответственности за последствия самостоятельных решений Заказчика о лечении. Исполнитель не обещает конкретного результата, так как состояние здоровья зависит от многих факторов вне контроля сторон.</p>
+<h2>8. Персональные данные</h2><p>Обработка персональных данных — по <a href="/privacy">политике обработки персональных данных</a>.</p>
+<h2>9. Заключение договора</h2><p>Договор заключается путём акцепта <a href="/offer">публичной оферты</a> [УТОЧНИТЬ у юриста].</p>
+<h2>10. Реквизиты Исполнителя</h2><p>{party}, ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}, {e(LEGAL['address'])}, {e(LEGAL['email'])}.</p>"""
+    page("/agreement", "Договор об оказании информационно-консультационных услуг",
+         "Договор об оказании информационно-консультационных услуг врача-эндокринолога и диетолога онлайн: предмет, порядок, оплата, отмена, ответственность.",
+         agreement, "Договор об оказании информационно-консультационных услуг", [], [("Правовая информация", "/legal"), ("Договор", "/agreement")])
+    docs = [("/offer", "Публичная оферта", "Условия, на которых заключается договор: предмет, стоимость, акцепт."),
+            ("/agreement", "Договор об оказании услуг", "Порядок оказания консультации и сопровождения, оплата, отмена, ответственность."),
+            ("/privacy", "Политика обработки персональных данных", "Какие данные собираются, зачем, где хранятся и как отозвать согласие (152-ФЗ)."),
+            ("/privacy#consent", "Согласие на обработку персональных данных", "Даётся отметкой в каждой форме на сайте."),
+            ("/documents", "Дипломы и сертификаты врача", "Образование, аккредитация, членство в профессиональных обществах.")]
+    cards = "".join(f'<a class="post" href="{h}"><h2>{e(t)}</h2><p>{e(s)}</p><span class="more">Открыть →</span></a>' for h, t, s in docs)
+    legal = f"""<p class="notice"><strong>{e(NOT_MEDICAL)}</strong><br>{e(DISCLAIMER)}<br>{e(CONTRAINDICATIONS)}</p>
+<div class="posts">{cards}</div>
+<h2>Исполнитель</h2><p>{party}<br>ИНН {e(LEGAL['inn'])} · ОГРНИП {e(LEGAL['ogrnip'])}<br>{e(LEGAL['address'])} · {e(LEGAL['email'])}</p>"""
+    page("/legal", "Правовая информация: оферта, договор, политика ПД",
+         "Публичная оферта, договор об оказании информационно-консультационных услуг, политика обработки персональных данных и реквизиты врача-эндокринолога.",
+         legal, "Правовая информация", [], [("Правовая информация", "/legal")])
 
 
 def build_thanks():

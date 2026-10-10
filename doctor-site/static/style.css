@@ -373,3 +373,7 @@ footer.site ul{columns:2;padding-left:18px}
 #support h3{margin:10px 0 8px}
 #support p{opacity:.9}
 .btn .d-only{margin-left:-8px}
+
+.notice{background:var(--tint);border:1.5px solid var(--blue);border-radius:16px;padding:16px 18px;margin:24px 0;font-size:15px}
+.notice strong{color:var(--blue-deep)}
+footer.site strong{color:#fff}
