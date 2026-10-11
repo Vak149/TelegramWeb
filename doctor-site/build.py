@@ -344,9 +344,8 @@ def build_home_blank():
     dirs = "".join(f'<a class="dir" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">подробнее →</span></a>' for x in DIRECTIONS)
     calcs = "".join(f'<a href="/calculators/{c["slug"]}"><b>{e(c["nav"])}</b><code>{f}</code></a>' for c, f in zip(CALCS, ["вес / рост²", "Миффлин — Сан Жеор", "глюкоза × инсулин / 22,5"]))
     qual, socs, rail, arts, fq = mobile_parts(d)
-    body = f"""<section class="qual m-only"><span class="kicker">Квалификация</span><h2>Каждое слово подтверждено документом</h2>
-<p class="sub">Дипломы, аккредитация и членство в обществах — сканы и ссылки на реестры.</p>
-<div class="qlist">{qual}</div><div class="socs">{socs}</div></section>
+    body = f"""<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
+<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
 <div class="d-only"><span class="kicker" style="margin-top:64px">Разбор анализов</span><h2 style="margin-top:12px">Что показывает ваш бланк</h2>
 <div class="sheet"><div class="sheet-head"><span class="kicker">Показатель</span><span class="kicker">Что показывает</span><span></span></div>{rows}</div>
 <span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С какими вопросами приходят</h2>
@@ -361,8 +360,6 @@ def build_home_blank():
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
 </div>
 </div>
-<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
-<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
 <section class="m-band dirs-band m-only"><span class="kicker">Направления</span><h2>С чем приходят</h2><div class="rail">{rail}</div></section>
 <section class="m-band how-band m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
 <ol class="steps m-steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
@@ -375,6 +372,9 @@ def build_home_blank():
 <section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
 <div class="m-only"><div class="card blue m-gift"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div></div>
+<section class="qual m-only"><span class="kicker">Квалификация</span><h2>Каждое слово подтверждено документом</h2>
+<p class="sub">Дипломы, аккредитация и членство в обществах — сканы и ссылки на реестры.</p>
+<div class="qlist">{qual}</div><div class="socs">{socs}</div></section>
 {price_block()}"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
