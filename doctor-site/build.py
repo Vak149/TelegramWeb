@@ -401,7 +401,8 @@ def build_about():
               "medicalSpecialty": ["Endocrine", "DietNutrition"], "description": d["specialty"],
               "alumniOf": [{"@type": "EducationalOrganization", "name": x["where"]} for x in d["education"]],
               "memberOf": [{"@type": "Organization", "name": m["name"], "url": m["url"]} for m in d["memberships"]],
-              "sameAs": [p["url"] for p in d["profiles"]], "priceRange": price()}
+              "sameAs": [p["url"] for p in d["profiles"]], "priceRange": price(),
+              "worksFor": [{"@type": "MedicalClinic", "name": "Клиника «Чайка»", "address": {"@type": "PostalAddress", "streetAddress": "Пресненская набережная, 8с1", "addressLocality": "Москва", "addressCountry": "RU"}}]}
     page("/about", f"О враче: {plain(d['name']) or 'эндокринолог, диетолог'}, образование и опыт",
          "Образование, сертификаты, стаж и членство в ESE, EASD и Endocrine Society врача-эндокринолога и диетолога. Документы и ссылки для проверки квалификации.",
          body, f"{d['name']} — врач-эндокринолог, диетолог", [schema], [("О враче", "/about")], "profile")
