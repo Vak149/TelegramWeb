@@ -321,3 +321,20 @@ footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
 @media(max-width:899px){.more-link{margin:20px 0 0;font-size:15px}.qual .sub{display:none}}
 .voice{margin-top:48px}
 @media(max-width:899px){.voice{margin-top:0}.qual{margin:40px 0 32px}}
+@media(max-width:899px){
+  main .two > .card.blue:only-child{background:var(--tint);border:0;color:var(--ink);border-radius:0;margin:0 -16px;padding:32px 16px}
+  main .two > .card.blue:only-child .kicker{color:var(--blue)}
+  main .two > .card.blue:only-child h3{color:var(--ink)}
+  main .two > .card.blue:only-child p{color:var(--ink-2)!important;opacity:1!important}
+  main .two > .card.blue:only-child .btn{background:var(--blue);color:#fff!important;width:100%;min-height:52px}
+  .home-hero ~ main .two{margin-top:40px}
+  .sheet{margin-inline:-16px;border-radius:0;border-inline:0}
+  .dirs{margin-top:4px}
+  .steps li{margin:0}
+}
+@media(max-width:899px){
+  .steps:not(.m-steps){display:grid;grid-template-columns:1fr;gap:0;margin:0}
+  .steps:not(.m-steps) li{display:block;background:none;border:0;border-top:2px solid var(--ink);border-radius:0;padding:14px 0 18px}
+  .steps:not(.m-steps) li::before{display:block}
+  .steps:not(.m-steps) p{margin:4px 0 0}
+}
