@@ -338,7 +338,9 @@ def build_home_blank():
 <div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b>{e(d['specialty'])}</div></div>
 </div></div>
 <div class="trust d-only"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""
-    rows = "".join(f'<a class="row" href="/analizy/{a["slug"]}"><b>{e(a["name"].split(" (")[0])}</b><small>{e(a["what"].split(".")[0])}</small><span class="go">разбор →</span></a>' for a in ANALYSES[:6])
+    short = {"ttg": "регуляция щитовидной железы", "svobodnyj-t4": "основной гормон щитовидной железы", "antitela-k-tpo": "маркер аутоиммунного процесса",
+             "glyukoza-natoshchak": "сахар крови натощак", "glikirovannyj-gemoglobin": "средняя глюкоза за 2–3 месяца", "vitamin-d": "запасы витамина D"}
+    rows = "".join(f'<a class="row" href="/analizy/{a["slug"]}"><b>{e(a["name"].split(" (")[0])}</b><small>{e(short.get(a["slug"], ""))}</small><span class="go">разбор →</span></a>' for a in ANALYSES[:6])
     dirs = "".join(f'<a class="dir" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">подробнее →</span></a>' for x in DIRECTIONS)
     calcs = "".join(f'<a href="/calculators/{c["slug"]}"><b>{e(c["nav"])}</b><code>{f}</code></a>' for c, f in zip(CALCS, ["вес / рост²", "Миффлин — Сан Жеор", "глюкоза × инсулин / 22,5"]))
     qual, socs, rail, arts, fq = mobile_parts(d)
@@ -350,17 +352,15 @@ def build_home_blank():
 <span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С какими вопросами приходят</h2>
 <div class="dirs">{dirs}</div>
 <span class="kicker" style="margin-top:72px">Как проходит</span><h2 style="margin-top:12px">От заявки до рекомендаций</h2>
-<p>{e(CONSULT_HOW)}</p>
 <ol class="steps"><li><b>Заявка</b><p>На сайте или в мессенджере. Подтверждаем удобное время.</p></li>
 <li><b>Подготовка</b><p>Присылаете анализы в PDF или фото, список препаратов, дневник питания. <a href="/preparation">Подробнее</a></p></li>
 <li><b>Разговор</b><p>Видеосвязь: жалобы, история здоровья, разбор документов, ваши вопросы.</p></li>
 <li><b>Рекомендации</b><p>Какие обследования пройти, к кому обратиться очно, что изменить в питании.</p></li></ol>
-<div class="two"><div class="card"><span class="kicker">Честно о формате</span><h3>Когда онлайн не подходит</h3>{ul(NOT_ONLINE_COMMON)}</div>
-<div class="card"><span class="kicker">Границы специальности</span><h3>Чем я не занимаюсь</h3><ul>{"".join(f"<li>{e(a)} → <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div>
+<p class="more-link"><a href="/consultation#limits">Когда онлайн-формат не подходит и к кому я направляю →</a></p>
 <div class="two"><div class="card blue"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
 </div>
-{videos_block()}</div>
+</div>
 <div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
 <figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote>
 <div class="approach m-only">
@@ -369,7 +369,6 @@ def build_home_blank():
 <div class="ap"><i>!</i><span><b>Честно о границах</b>Скажу, когда нужен очный приём или другой специалист.</span></div></div></figure></div>
 <section class="m-band dirs-band m-only"><span class="kicker">Направления</span><h2>С чем приходят</h2><div class="rail">{rail}</div></section>
 <section class="m-band how-band m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
-<p class="how-intro">{e(CONSULT_HOW)}</p>
 <ol class="steps m-steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
 <li><i>2</i><span><b>Подготовка</b>Анализы в PDF или фото, список препаратов, дневник питания.</span></li>
 <li><i>3</i><span><b>Видеосвязь</b>Жалобы, история здоровья, разбор документов, ваши вопросы.</span></li>
@@ -426,7 +425,7 @@ def build_consultation():
 <li>Консультация по видеосвязи, {e(SERVICE['duration'])}.</li><li>После — письменные рекомендации [УТОЧНИТЬ: формат].</li></ol>
 <h2>Что подготовить</h2>{ul(CONSULT_PREPARE)}
 <p><a href="/preparation">Подробно: как подготовиться к консультации →</a> · <a href="/pamyatka-k-konsultacii.txt" download data-goal="memo_download">скачать памятку</a></p>
-<h2>Что не входит и не решается онлайн</h2>{ul(NOT_ONLINE_COMMON)}
+<h2 id="limits">Что не входит и не решается онлайн</h2>{ul(NOT_ONLINE_COMMON)}
 <div class="card blue grain" id="support">{MOL}<span class="kicker">Сопровождение</span><h3>{e(SUPPORT['name'])} — {rub(SUPPORT['price'])}</h3>
 <p>{e(SUPPORT['about'])}</p><a class="btn white" href="#booking" data-goal="cta_support">Записаться на сопровождение</a></div>
 <h2>Перенос и отмена</h2><p>{e(SERVICE['cancel_policy'])}</p>
