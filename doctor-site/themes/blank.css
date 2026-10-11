@@ -140,3 +140,17 @@ footer.site a{color:var(--blue)!important}
 }
 @media(max-width:899px){.home-hero .portrait img{margin-bottom:0}}
 .portrait .tag b{display:block}
+
+/* Всегда светлая тема (тёмный режим телефона не переключает сайт) */
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#f2f4f6;--sheet:#ffffff;--tint:#e6ecf7;--ink:#152238;--ink-2:#4a5870;--line:#d5dce5;--hl:#dbe6ff;--hl-ink:#1f45b0;
+  --blue:#2f5bd3;--blue-deep:#1f45b0;--on-blue:#ffffff;--todo-bg:#dbe6ff;--todo-fg:#143aa6;--input-bg:#ffffff;--input-line:#b7c3da;color-scheme:light}}
+:root[data-theme="dark"]{
+  --bg:#f2f4f6;--sheet:#ffffff;--tint:#e6ecf7;--ink:#152238;--ink-2:#4a5870;--line:#d5dce5;--hl:#dbe6ff;--hl-ink:#1f45b0;
+  --blue:#2f5bd3;--blue-deep:#1f45b0;--on-blue:#ffffff;--todo-bg:#dbe6ff;--todo-fg:#143aa6;--input-bg:#ffffff;--input-line:#b7c3da;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) main a{color:var(--blue)}}
+:root[data-theme="dark"] main a{color:var(--blue)}
+
+/* Без закреплённой кнопки записи внизу экрана */
+.sticky-cta{display:none!important}
+body{padding-bottom:0}
