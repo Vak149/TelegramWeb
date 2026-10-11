@@ -26,7 +26,7 @@ THEME = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--theme=")),
 DIST = ROOT / ("dist" if THEME == "blank" else f"dist-{THEME}")
 FONTS = {
     "yasnost": "family=Manrope:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@1,7..72,400",
-    "blank": "family=Unbounded:wght@300;500&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500",
+    "blank": "family=Unbounded:wght@300;500&family=Golos+Text:wght@400;500;600;700",
 }
 TODAY = date.today().isoformat()
 FORBIDDEN = [r"гарант", r"100\s*%", r"вылеч", r"избави", r"лучший врач", r"самый опытный"]
@@ -335,7 +335,6 @@ def build_home_blank():
 <div class="facts"><div><b>{price()}</b>консультация</div><div><a href="/consultation#support"><b>{rub(SUPPORT['price'])}</b>сопровождение 2&nbsp;недели</a></div></div>
 </div>
 <div class="portrait"><img src="{d['photo']}" width="420" height="525" alt="{alt}" fetchpriority="high">
-<div class="pill m-only">{price()}</div>
 <div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b>{e(d['specialty'])}</div></div>
 </div></div>
 <div class="trust d-only"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""

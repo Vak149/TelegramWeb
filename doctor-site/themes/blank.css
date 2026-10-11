@@ -224,3 +224,11 @@ footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
   .f-col a{padding:7px 0}
   footer.site li a{padding:7px 0}
 }
+
+/* Без моноширинного шрифта: подписи и метки — Golos Text */
+:root{--mono:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif}
+.kicker,.crumbs,.f-h,.f-spec,.f-req,.byline,th,.facts div{font-family:var(--sans)!important;letter-spacing:.04em}
+.kicker,.f-h{font-weight:600}
+.crumbs{text-transform:none;letter-spacing:0;font-size:13px}
+.f-spec,.facts div{text-transform:none;letter-spacing:0}
+.sheet .go,.dir .go,.dcard .go,.arts a::after,.q .doc,.q .ic,.ap i,.calc-list code,main details summary::after{font-family:var(--sans)!important;font-weight:600;letter-spacing:0}
