@@ -11,7 +11,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from config import (NOT_MEDICAL, CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
+from config import (IN_PERSON, NOT_MEDICAL, CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
 from decor import CURVE, MOL
 from content_articles import MORE_ARTICLES
@@ -99,7 +99,7 @@ document.addEventListener("click",function(ev){{var a=ev.target.closest("[data-g
 
 
 NAV = [("/consultation", "Консультация"), ("/about", "О враче"), ("/preparation", "Подготовка"), ("/analizy", "Анализы"),
-       ("/calculators", "Калькуляторы"), ("/blog", "Статьи"), ("/reviews", "Отзывы"), ("/contacts", "Контакты")]
+       ("/blog", "Статьи"), ("/reviews", "Отзывы"), ("/contacts", "Контакты")]
 
 
 SEO_Q = {
@@ -160,7 +160,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <p>{e(LEGAL['form'])} {e(DOCTOR['name'])}, ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}. {e(LEGAL['address'])}. E-mail: {e(LEGAL['email'])}</p>
 <p>{e(DISCLAIMER)} {e(CONTRAINDICATIONS)}</p>
 <p><strong>{e(NOT_MEDICAL)}</strong></p>
-<p><a href="/legal">Правовая информация</a> · <a href="/offer">Публичная оферта</a> · <a href="/agreement">Договор об оказании услуг</a> · <a href="/privacy">Политика обработки персональных данных</a> · <a href="/contacts">Контакты</a></p>
+<p><a href="/legal">Правовая информация</a> · <a href="/offer">Публичная оферта</a> · <a href="/agreement">Договор об оказании услуг</a> · <a href="/privacy">Политика обработки персональных данных</a> · <a href="/calculators/bmi">Калькулятор ИМТ</a> · <a href="/contacts">Контакты</a></p>
 </div></footer>
 <div class="sticky-cta"><a class="btn" href="/consultation#booking" data-goal="cta_sticky">Записаться на консультацию · {price()}</a></div>
 <script>document.addEventListener("click",function(e){{var m=document.querySelector(".menu[open]");if(m&&!m.contains(e.target))m.open=false}});</script>
@@ -242,7 +242,7 @@ def mobile_parts(d):
     q_rows += [("АКК", c["what"], f'действует до {c["valid_until"]}', c["doc"], "документ") for c in d["certificates"]]
     qual = "".join(f'<a class="q" href="{h}"><span class="ic">{ic}</span><span><b>{e(t)}</b><span>{e(s)}</span></span><span class="doc">{dl} →</span></a>' for ic, t, s, h, dl in q_rows)
     socs = "".join(f'<a class="soc" href="{m["url"]}" rel="noopener"><b>{ab}</b><span>{ru}</span></a>' for m, ab, ru in zip(d["memberships"], ["ESE", "EASD", "ENDO"], ["Европейское общество эндокринологов", "Европейская ассоциация по изучению диабета", "Endocrine Society, США"]))
-    hexes = {"thyroid": "Т4", "diabetes": "A1c", "insulin-resistance": "HOMA", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
+    hexes = {"thyroid": "Т4", "diabetes": "A1c", "insulin-resistance": "ИР", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
     spark = '<svg viewBox="0 0 120 50" aria-hidden="true" focusable="false"><path d="M0,44 C20,42 26,30 36,12 C42,2 48,10 58,20 C74,34 96,36 120,40" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
     rail = "".join(f'<a class="dcard" href="/{x["slug"]}"><span class="hex">{hexes.get(x["slug"], "")}</span><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">Подробнее →</span>{spark}</a>' for x in DIRECTIONS)
     pick = ["ttg-v-norme-a-samochuvstvie-plohoe", "pochemu-ves-ne-uhodit-pri-deficite-kalorij", "insulinorezistentnost-priznaki", "kakie-analizy-sdat-pered-konsultaciej-endokrinologa"]
@@ -305,7 +305,7 @@ def build_home():
 <section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
 <div class="two"><div class="card blue grain gift">{MOL}{CURVE}<span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
-<div class="card d-only"><span class="kicker">Калькуляторы</span><h3>Посчитайте сами</h3><div class="chips">{calcs}</div></div></div>
+</div>
 <div class="d-only">{videos_block()}</div>
 <section class="m-band final-band grain m-only">{MOL}<span class="kicker">Запись</span><h2>Записаться на онлайн-консультацию</h2><a class="btn white" href="/consultation#booking" data-goal="cta_final">Записаться · {price()}</a></section>"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
@@ -330,7 +330,6 @@ def build_home_blank():
 </div></div>
 <div class="trust d-only"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""
     rows = "".join(f'<a class="row" href="/analizy/{a["slug"]}"><b>{e(a["name"].split(" (")[0])}</b><small>{e(a["what"].split(".")[0])}</small><span class="go">разбор →</span></a>' for a in ANALYSES[:6])
-    rows += '<a class="row" href="/calculators/homa-ir"><b>HOMA-IR</b><small>Расчётный индекс чувствительности к инсулину</small><span class="go">рассчитать →</span></a>'
     dirs = "".join(f'<a class="dir" href="/{x["slug"]}"><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">подробнее →</span></a>' for x in DIRECTIONS)
     calcs = "".join(f'<a href="/calculators/{c["slug"]}"><b>{e(c["nav"])}</b><code>{f}</code></a>' for c, f in zip(CALCS, ["вес / рост²", "Миффлин — Сан Жеор", "глюкоза × инсулин / 22,5"]))
     qual, socs, rail, arts, fq = mobile_parts(d)
@@ -351,7 +350,7 @@ def build_home_blank():
 <div class="card"><span class="kicker">Границы специальности</span><h3>Чем я не занимаюсь</h3><ul>{"".join(f"<li>{e(a)} → <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div>
 <div class="two"><div class="card blue"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
-<div class="calc-list">{calcs}</div></div>
+</div>
 {videos_block()}</div>
 <div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
 <figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote>
@@ -441,8 +440,8 @@ def build_consultation():
 
 
 def build_direction(d):
-    tools_map = {"insulin-resistance": ("/calculators/homa-ir", "Калькулятор HOMA-IR"), "weight": ("/calculators/bmi", "Калькулятор ИМТ"),
-                 "nutrition": ("/calculators/bmr", "Калькулятор базового обмена"), "thyroid": ("/analizy/ttg", "Разбор анализа на ТТГ"),
+    tools_map = {"insulin-resistance": ("/analizy/glikirovannyj-gemoglobin", "Разбор анализа HbA1c"), "weight": ("/calculators/bmi", "Калькулятор ИМТ"),
+                 "thyroid": ("/analizy/ttg", "Разбор анализа на ТТГ"),
                  "diabetes": ("/analizy/glikirovannyj-gemoglobin", "Разбор анализа HbA1c")}
     t = tools_map.get(d["slug"])
     tools = f'<div class="card"><p>Полезно перед консультацией: <a href="{t[0]}">{t[1]}</a> · <a href="/preparation">как подготовиться</a></p></div>' if t else ""
@@ -521,7 +520,7 @@ def build_blog():
 
 def build_contacts():
     body = f"""<div class="card"><p>Мессенджеры и телефон: {messengers()}</p><p>E-mail: {e(LEGAL['email'])}</p>
-<p>Консультации проводятся онлайн. Очный приём: [УТОЧНИТЬ: есть ли, где, по какой цене].</p></div>
+<p>Консультации проводятся онлайн. Очный приём: {e(IN_PERSON)}.</p></div>
 <h2>Реквизиты</h2><p>{e(LEGAL['form'])} {e(DOCTOR['name'])}<br>ИНН {e(LEGAL['inn'])}<br>ОГРНИП {e(LEGAL['ogrnip'])}<br>{e(LEGAL['address'])}</p>
 {booking_form()}"""
     page("/contacts", "Контакты и реквизиты эндокринолога-диетолога",
@@ -689,25 +688,11 @@ CALCS = [
      "fields": [("weight", "Вес, кг"), ("height", "Рост, см")],
      "about": "<p>ИМТ = вес (кг) / рост² (м). Классификация ВОЗ: менее 18,5 — ниже нормы, 18,5–24,9 — норма, 25–29,9 — избыточная масса тела, 30 и более — ожирение.</p><p>ИМТ не учитывает соотношение мышц и жира, распределение жира и возраст. У спортсменов он может быть завышен, у пожилых — занижен. Это ориентир, а не диагноз.</p>",
      "related": "/weight"},
-    {"slug": "bmr", "name": "Калькулятор базового обмена веществ", "seo": "Калькулятор базового обмена", "nav": "Базовый обмен",
-     "description": "Рассчитайте базовый обмен веществ по формуле Миффлина — Сан Жеора: сколько калорий организм тратит в покое. Онлайн-калькулятор от врача-диетолога.",
-     "fields": [("weight", "Вес, кг"), ("height", "Рост, см"), ("age", "Возраст, лет")], "sex": True,
-     "about": "<p>Базовый обмен — энергия, которую организм тратит в покое на дыхание, кровообращение, работу органов. Формула Миффлина — Сан Жеора: 10 × вес + 6,25 × рост − 5 × возраст + 5 (мужчины) или −161 (женщины).</p><p>Это оценка: реальный расход зависит от состава тела, активности, гормонального фона. Не используйте результат для жёстких диет.</p>",
-     "related": "/nutrition"},
-    {"slug": "homa-ir", "name": "Калькулятор индекса HOMA-IR", "seo": "Калькулятор HOMA-IR онлайн", "nav": "HOMA-IR",
-     "description": "Рассчитайте индекс инсулинорезистентности HOMA-IR по глюкозе и инсулину натощак. Объясняем, как понимать результат и почему нет единой нормы.",
-     "fields": [("glucose", "Глюкоза натощак, ммоль/л"), ("insulin", "Инсулин натощак, мкЕд/мл")],
-     "about": "<p>HOMA-IR = глюкоза (ммоль/л) × инсулин (мкЕд/мл) / 22,5. Оба анализа сдаются одновременно, строго натощак.</p><p>Единого порога для HOMA-IR нет: в исследованиях используют разные значения. Индекс — дополнительный ориентир, его оценивают вместе с жалобами, весом, другими анализами. <a href=\"/analizy/homa-ir\">Подробнее об индексе</a>.</p>",
-     "related": "/insulin-resistance"},
 ]
 CALC_KEY = {"bmi": "bmi", "bmr": "bmr", "homa-ir": "homa"}
 
 
 def build_calculators():
-    cards = "".join(f'<div class="card"><h2><a href="/calculators/{c["slug"]}">{e(c["nav"])}</a></h2><p>{e(c["description"])}</p></div>' for c in CALCS)
-    page("/calculators", "Калькуляторы ИМТ и HOMA-IR",
-         "Онлайн-калькуляторы от врача-эндокринолога: индекс массы тела, базовый обмен веществ и индекс инсулинорезистентности HOMA-IR. С пояснениями.",
-         f'<div class="grid three">{cards}</div>{disclaimer_block()}', "Медицинские калькуляторы", [], [("Калькуляторы", "/calculators")])
     for c in CALCS:
         fields = "".join(f'<label for="c-{n}">{l}</label><input id="c-{n}" name="{n}" inputmode="decimal" required>' for n, l in c["fields"])
         if c.get("sex"):
@@ -723,14 +708,14 @@ def build_calculators():
         schema = {"@context": "https://schema.org", "@type": "MedicalWebPage", "url": url(f"/calculators/{c['slug']}"), "name": c["name"],
                   "lastReviewed": UPDATED, "reviewedBy": physician_ref(), "author": physician_ref()}
         page(f"/calculators/{c['slug']}", c["seo"], c["description"], body, c["name"], [schema],
-             [("Калькуляторы", "/calculators"), (c["nav"], f"/calculators/{c['slug']}")])
+             [(c["nav"], f"/calculators/{c['slug']}")])
 
 
 def build_analyses():
     by = {a["slug"]: a for a in ANALYSES}
     cards = "".join(f'<div class="card"><h2><a href="/analizy/{a["slug"]}">{e(a["name"])}</a></h2><p>{e(a["what"])}</p></div>' for a in ANALYSES)
     page("/analizy", "Разбор анализов: ТТГ, глюкоза",
-         "Что показывают ТТГ, свободный Т4, антитела к ТПО, глюкоза, HbA1c, инсулин, HOMA-IR и витамин D. Понятные разборы анализов от врача-эндокринолога.",
+         "Что показывают ТТГ, свободный Т4, антитела к ТПО, глюкоза натощак, гликированный гемоглобин и витамин D. Понятные разборы анализов от врача-эндокринолога.",
          f'<p>Что показывает каждый анализ, когда его сдают и что делать с результатом. Без диагнозов и назначений: результаты всегда оценивает врач.</p><div class="grid">{cards}</div>',
          "Разбор анализов: что показывают и что делать дальше", [], [("Анализы", "/analizy")])
     for a in ANALYSES:
