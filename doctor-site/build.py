@@ -337,7 +337,7 @@ def build_home_blank():
 <div class="portrait"><img src="{d['photo']}" width="420" height="525" alt="{alt}" fetchpriority="high">
 <div class="tag"><span class="kicker">Врач</span><b>{e(d['name'])}</b>{e(d['specialty'])}</div></div>
 </div></div>
-<div class="trust"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""
+<div class="trust d-only"><div class="wrap"><span>Член ассоциаций</span>{members}</div></div>"""
     short = {"ttg": "регуляция щитовидной железы", "svobodnyj-t4": "основной гормон щитовидной железы", "antitela-k-tpo": "маркер аутоиммунного процесса",
              "glyukoza-natoshchak": "сахар крови натощак", "glikirovannyj-gemoglobin": "средняя глюкоза за 2–3 месяца", "vitamin-d": "запасы витамина D"}
     rows = "".join(f'<a class="row" href="/analizy/{a["slug"]}"><b>{e(a["name"].split(" (")[0])}</b><small>{e(short.get(a["slug"], ""))}</small><span class="go">разбор →</span></a>' for a in ANALYSES[:6])
@@ -346,7 +346,7 @@ def build_home_blank():
     qual, socs, rail, arts, fq = mobile_parts(d)
     body = f"""<div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
 <figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
-<span class="kicker" style="margin-top:64px">Разбор анализов</span><h2 style="margin-top:12px">Что показывает ваш бланк</h2>
+<div class="d-only"><span class="kicker" style="margin-top:64px">Разбор анализов</span><h2 style="margin-top:12px">Что показывает ваш бланк</h2>
 <div class="sheet"><div class="sheet-head"><span class="kicker">Показатель</span><span class="kicker">Что показывает</span><span></span></div>{rows}</div>
 <span class="kicker" style="margin-top:72px">Направления</span><h2 style="margin-top:12px">С какими вопросами приходят</h2>
 <div class="dirs">{dirs}</div>
@@ -359,6 +359,22 @@ def build_home_blank():
 <div class="two"><div class="card blue"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
 </div>
+</div>
+<section class="m-band dirs-band m-only"><span class="kicker">Направления</span><h2>С чем приходят</h2><div class="rail">{rail}</div></section>
+<section class="m-band how-band m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
+<ol class="steps m-steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
+<li><i>2</i><span><b>Подготовка</b>Анализы в PDF или фото, список препаратов, дневник питания.</span></li>
+<li><i>3</i><span><b>Видеосвязь</b>Жалобы, история здоровья, разбор документов, ваши вопросы.</span></li>
+<li><i>4</i><span><b>Рекомендации</b>Какие обследования пройти, к кому обратиться очно, что изменить в питании.</span></li></ol>
+<a class="btn white" href="/preparation">Как подготовиться к консультации</a></section>
+<section class="qual m-only"><span class="kicker">Квалификация</span><h2>Каждое слово подтверждено документом</h2>
+<p class="sub">Дипломы, аккредитация и членство в обществах — сканы и ссылки на реестры.</p>
+<div class="qlist">{qual}</div><div class="socs">{socs}</div></section>
+<p class="more-link m-only"><a href="/consultation#limits">Когда онлайн-формат не подходит и к кому я направляю →</a></p>
+<section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
+<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div><p class="more-link"><a href="/blog">Все статьи →</a></p></section>
+<div class="m-only"><div class="card blue m-gift"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
+<p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div></div>
 {price_block()}"""
     page("/", "Эндокринолог и диетолог онлайн: консультация",
          "Онлайн-консультация врача-эндокринолога и диетолога: разбор жалоб, анализов и питания. Член ESE, EASD, Endocrine Society. Цена 5 000 ₽. Запишитесь.",
