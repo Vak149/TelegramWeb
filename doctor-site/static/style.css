@@ -378,3 +378,20 @@ footer.site ul{columns:2;padding-left:18px}
 .notice strong{color:var(--blue-deep)}
 footer.site strong{color:#fff}
 .menu .burger{display:inline-block;width:16px;height:2px;background:currentColor;box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor;vertical-align:middle;margin-right:8px}
+
+/* ===== подвал ===== */
+footer.site ul{columns:auto;list-style:none;padding:0;margin:0;display:grid;gap:2px}
+.f-grid{display:grid;gap:32px}
+@media(min-width:760px){.f-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}}
+.f-brand{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.f-name{font-weight:800;font-size:18px;text-decoration:none}
+.f-spec{opacity:.8}
+.f-tg{margin-top:12px;background:#fff;color:var(--blue-deep)!important}
+.f-contacts{margin:10px 0 0;line-height:1.7}
+.f-h{display:block;font:700 12px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:12px}
+.f-col a{text-decoration:none;display:inline-block;padding:5px 0}
+.f-col a:hover{text-decoration:underline}
+.f-legal{margin-top:36px;padding-top:24px;border-top:1px solid rgba(255,255,255,.2);font-size:13px;line-height:1.55}
+.f-legal p{margin:0 0 10px;max-width:90ch}
+.f-notmed{font-weight:700}
+.f-req{opacity:.75}

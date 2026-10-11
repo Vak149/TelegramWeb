@@ -156,11 +156,21 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 {body}
 </div></main>
 <footer class="site grain">{MOL}<div class="wrap">
-<p><strong>Направления:</strong></p><ul>{dirs}</ul>
-<p>{e(LEGAL['form'])} {e(DOCTOR['name'])}, ИНН {e(LEGAL['inn'])}, ОГРНИП {e(LEGAL['ogrnip'])}. {e(LEGAL['address'])}. E-mail: {e(LEGAL['email'])}</p>
+<div class="f-grid">
+<div class="f-brand"><a class="f-name" href="/">{e(DOCTOR['name'])}</a><span class="f-spec">{e(DOCTOR['specialty'])}</span>
+<a class="btn f-tg" href="https://t.me/{CONTACTS['telegram']}" data-goal="messenger_telegram" rel="noopener">Написать в Telegram</a>
+<p class="f-contacts"><a href="mailto:{LEGAL['email']}">{e(LEGAL['email'])}</a><br>Очный приём: {e(IN_PERSON)}</p></div>
+<nav class="f-col" aria-label="Направления"><span class="f-h">Направления</span><ul>{dirs}</ul></nav>
+<nav class="f-col" aria-label="Пациентам"><span class="f-h">Пациентам</span><ul>
+<li><a href="/consultation">Консультация и цены</a></li><li><a href="/preparation">Подготовка</a></li><li><a href="/analizy">Разбор анализов</a></li>
+<li><a href="/blog">Статьи</a></li><li><a href="/materials">Материалы</a></li><li><a href="/calculators/bmi">Калькулятор ИМТ</a></li><li><a href="/faq">Вопросы</a></li></ul></nav>
+<nav class="f-col" aria-label="Документы"><span class="f-h">Документы</span><ul>
+<li><a href="/legal">Правовая информация</a></li><li><a href="/offer">Публичная оферта</a></li><li><a href="/agreement">Договор об оказании услуг</a></li>
+<li><a href="/privacy">Политика обработки ПД</a></li><li><a href="/documents">Дипломы и сертификаты</a></li><li><a href="/contacts">Контакты</a></li></ul></nav>
+</div>
+<div class="f-legal"><p class="f-notmed">{e(NOT_MEDICAL)}</p>
 <p>{e(DISCLAIMER)} {e(CONTRAINDICATIONS)}</p>
-<p><strong>{e(NOT_MEDICAL)}</strong></p>
-<p><a href="/legal">Правовая информация</a> · <a href="/offer">Публичная оферта</a> · <a href="/agreement">Договор об оказании услуг</a> · <a href="/privacy">Политика обработки персональных данных</a> · <a href="/calculators/bmi">Калькулятор ИМТ</a> · <a href="/contacts">Контакты</a></p>
+<p class="f-req">© {date.today().year} {e(LEGAL['form'])} {e(DOCTOR['name'])} · ИНН {e(LEGAL['inn'])} · ОГРНИП {e(LEGAL['ogrnip'])}</p></div>
 </div></footer>
 <div class="sticky-cta"><a class="btn" href="/consultation#booking" data-goal="cta_sticky">Записаться на консультацию · {price()}</a></div>
 <script>document.addEventListener("click",function(e){{var m=document.querySelector(".menu[open]");if(m&&!m.contains(e.target))m.open=false}});</script>

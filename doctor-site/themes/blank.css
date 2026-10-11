@@ -200,3 +200,27 @@ footer.site strong{color:var(--ink)}
   main .btn{text-align:center;justify-content:center}
   article ~ p .btn,main>.wrap>p>.btn{display:flex;width:100%;min-height:52px}
 }
+
+/* ===== подвал «Бланк»: тёмная графа документа ===== */
+footer.site{background:#152238;color:#c9d2e0;border-top:0;padding-block:48px 32px;font-size:15px}
+footer.site a{color:#fff!important}
+footer.site strong{color:#fff}
+footer.site::after{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(90deg,#2f5bd3 0 18px,transparent 18px 26px)}
+footer.site{position:relative}
+.f-name{font:500 18px/1.2 var(--display);color:#fff!important}
+.f-spec{font:400 12px/1.4 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:#9aa8c0}
+.f-tg{background:#2f5bd3;color:#fff!important;border-radius:999px;padding:13px 20px}
+.f-h{font:500 11px/1 var(--mono);letter-spacing:.1em;color:#9aa8c0;opacity:1;padding-bottom:10px;border-bottom:1px dashed rgba(255,255,255,.18)}
+.f-legal{border-top:1px dashed rgba(255,255,255,.18);color:#9aa8c0}
+.f-notmed{color:#fff;font-weight:600}
+.f-req{font-family:var(--mono);font-size:12px}
+footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
+@media(max-width:899px){
+  footer.site{padding-block:44px 28px}
+  .f-grid{grid-template-columns:1fr 1fr;gap:28px 16px}
+  .f-brand{grid-column:1/-1}
+  .f-tg{width:100%;justify-content:center;min-height:50px}
+  .f-col:last-child{grid-column:1/-1}
+  .f-col a{padding:7px 0}
+  footer.site li a{padding:7px 0}
+}
