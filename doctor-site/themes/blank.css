@@ -318,3 +318,4 @@ footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
   main .two > .card.blue:only-child .btn{grid-column:2;grid-row:1/4;background:var(--blue);color:#fff!important}
 }
 .more-link{margin:28px 0 0;font-weight:600}
+@media(max-width:899px){.more-link{margin:20px 0 0;font-size:15px}.qual .sub{display:none}}

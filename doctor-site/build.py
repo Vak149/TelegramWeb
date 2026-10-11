@@ -255,7 +255,7 @@ def mobile_parts(d):
     hexes = {"thyroid": "Т4", "diabetes": "A1c", "insulin-resistance": "ИР", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
     spark = '<svg viewBox="0 0 120 50" aria-hidden="true" focusable="false"><path d="M0,44 C20,42 26,30 36,12 C42,2 48,10 58,20 C74,34 96,36 120,40" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
     rail = "".join(f'<a class="dcard" href="/{x["slug"]}"><span class="hex">{hexes.get(x["slug"], "")}</span><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">Подробнее →</span>{spark}</a>' for x in DIRECTIONS)
-    pick = ["ttg-v-norme-a-samochuvstvie-plohoe", "pochemu-ves-ne-uhodit-pri-deficite-kalorij", "insulinorezistentnost-priznaki", "kakie-analizy-sdat-pered-konsultaciej-endokrinologa"]
+    pick = ["ttg-v-norme-a-samochuvstvie-plohoe", "pochemu-ves-ne-uhodit-pri-deficite-kalorij", "kakie-analizy-sdat-pered-konsultaciej-endokrinologa"]
     arts = "".join(f'<a href="/blog/{a["slug"]}"><b>{e(a.get("seo", a["title"]))}</b><span>{e(a["description"][:90].rsplit(" ", 1)[0])}…</span></a>' for s_ in pick for a in ARTICLES if a["slug"] == s_)
     fq = "".join(f'<details class="fq"{" open" if i == 0 else ""}><summary>{e(q)}</summary><p>{e(a)}</p></details>' for i, (q, a) in enumerate([FAQ[4], FAQ[1], FAQ[3]]))
     return qual, socs, rail, arts, fq
@@ -311,7 +311,7 @@ def build_home():
 <div class="two"><div class="card"><span class="kicker">Честно о формате</span><h3>Когда онлайн не подходит</h3>{ul(NOT_ONLINE_COMMON)}
 <p><a href="/blog/kogda-onlajn-format-ne-podhodit">Подробнее о границах формата →</a></p></div>
 <div class="card"><span class="kicker">Границы специальности</span><h3>Куда я направлю</h3><ul>{"".join(f"<li>{e(a)} — <strong>{e(b)}</strong></li>" for a, b in NOT_MY_FIELD)}</ul></div></div></div>
-<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div></section>
+<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div><p class="more-link"><a href="/blog">Все статьи →</a></p></section>
 <section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
 <div class="two"><div class="card blue grain gift">{MOL}{CURVE}<span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div>
@@ -362,11 +362,7 @@ def build_home_blank():
 </div>
 </div>
 <div class="voice"><div><span class="kicker">О враче</span><h2>{e(d['name'])}</h2><p style="color:var(--ink-2);margin:0">{e(d['specialty'].capitalize())}. <a href="/documents">Документы и членство в ассоциациях</a></p></div>
-<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote>
-<div class="approach m-only">
-<div class="ap"><i>КР</i><span><b>По клиническим рекомендациям</b>Опираюсь на рекомендации Минздрава и международных профессиональных обществ.</span></div>
-<div class="ap"><i>1:1</i><span><b>Ваши анализы, а не шаблон</b>Разбираю именно ваши результаты и историю здоровья.</span></div>
-<div class="ap"><i>!</i><span><b>Честно о границах</b>Скажу, когда нужен очный приём или другой специалист.</span></div></div></figure></div>
+<figure style="margin:0"><blockquote>{e(d['credo'])}</blockquote></figure></div>
 <section class="m-band dirs-band m-only"><span class="kicker">Направления</span><h2>С чем приходят</h2><div class="rail">{rail}</div></section>
 <section class="m-band how-band m-only"><span class="kicker">Как проходит</span><h2>От заявки до рекомендаций</h2>
 <ol class="steps m-steps"><li><i>1</i><span><b>Заявка</b>На сайте или в мессенджере. Подтверждаем удобное время.</span></li>
@@ -374,7 +370,8 @@ def build_home_blank():
 <li><i>3</i><span><b>Видеосвязь</b>Жалобы, история здоровья, разбор документов, ваши вопросы.</span></li>
 <li><i>4</i><span><b>Рекомендации</b>Какие обследования пройти, к кому обратиться очно, что изменить в питании.</span></li></ol>
 <a class="btn white" href="/preparation">Как подготовиться к консультации</a></section>
-<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div></section>
+<p class="more-link m-only"><a href="/consultation#limits">Когда онлайн-формат не подходит и к кому я направляю →</a></p>
+<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div><p class="more-link"><a href="/blog">Все статьи →</a></p></section>
 <section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
 <div class="m-only"><div class="card blue m-gift"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div></div>
