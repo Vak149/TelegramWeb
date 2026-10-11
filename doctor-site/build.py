@@ -371,8 +371,8 @@ def build_home_blank():
 <p class="sub">Дипломы, аккредитация и членство в обществах — сканы и ссылки на реестры.</p>
 <div class="qlist">{qual}</div><div class="socs">{socs}</div></section>
 <p class="more-link m-only"><a href="/consultation#limits">Когда онлайн-формат не подходит и к кому я направляю →</a></p>
-<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div><p class="more-link"><a href="/blog">Все статьи →</a></p></section>
 <section class="m-only m-sec"><span class="kicker">Частые вопросы</span><h2>Перед записью</h2>{fq}</section>
+<section class="m-only m-sec"><span class="kicker">Статьи врача</span><h2>Разборы простым языком</h2><div class="arts">{arts}</div><p class="more-link"><a href="/blog">Все статьи →</a></p></section>
 <div class="m-only"><div class="card blue m-gift"><span class="kicker">Бесплатно</span><h3>Чек-лист анализов, дневник питания и вопросы врачу</h3>
 <p style="opacity:.9">Три материала, чтобы прийти на консультацию подготовленным.</p><a class="btn white" href="/materials">Получить материалы</a></div></div>
 {price_block()}"""
