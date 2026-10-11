@@ -232,3 +232,57 @@ footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
 .crumbs{text-transform:none;letter-spacing:0;font-size:13px}
 .f-spec,.facts div{text-transform:none;letter-spacing:0}
 .sheet .go,.dir .go,.dcard .go,.arts a::after,.q .doc,.q .ic,.ap i,.calc-list code,main details summary::after{font-family:var(--sans)!important;font-weight:600;letter-spacing:0}
+
+/* ===== Мобильная версия без «коробок»: графы бланка, линейки, полосы ===== */
+@media(max-width:899px){
+  /* общие карточки → графы с линейкой сверху */
+  main .card:not(.blue){background:none;border:0;border-top:1px solid var(--line);border-radius:0;padding:22px 0 6px;margin:24px 0 0;box-shadow:none}
+  main .grid>.card:not(.blue){margin:0}
+  main .grid.three{display:block;overflow:visible;margin-inline:0;padding:0}
+  main .two .card:not(.blue){margin:0}
+  /* списки-карточки (статьи, правовая информация) → строки */
+  .posts{gap:0;margin-top:20px;border-top:1px solid var(--line)}
+  .post{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:18px 0;gap:6px}
+  .post .more{display:none}
+  .post h2{font-size:18px}
+  .post h2::after{content:" →";color:var(--blue)}
+  /* квалификация → графы документа */
+  .qlist{border:0;border-radius:0;border-top:1px solid var(--ink)}
+  .q{padding:14px 0;grid-template-columns:44px minmax(0,1fr) auto}
+  .q .ic{background:none;clip-path:none;width:auto;height:auto;color:var(--ink-2);font-size:11px;letter-spacing:.06em;justify-content:start}
+  .socs{gap:0;margin-top:0;border-bottom:1px solid var(--line)}
+  .soc{background:none;border-radius:0;padding:16px 4px;border-right:1px solid var(--line)}
+  .soc:last-child{border-right:0}
+  /* как проходит → таймлайн */
+  .how-band .m-steps{gap:0;position:relative;margin-left:4px}
+  .how-band .m-steps li{background:none;border:0;border-radius:0;padding:0 0 22px 0;grid-template-columns:40px minmax(0,1fr);position:relative}
+  .how-band .m-steps li:not(:last-child)::after{content:"";position:absolute;left:17px;top:38px;bottom:4px;width:2px;background:rgba(255,255,255,.22)}
+  .how-band .m-steps li i{width:36px;height:36px;border-radius:50%;clip-path:none;background:#2f5bd3;color:#fff;font:600 16px/1 var(--sans)}
+  /* статьи на главной → список вместо карусели */
+  .arts{display:block;margin:0;padding:0;border-top:1px solid var(--line)}
+  .arts a{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:16px 0;gap:4px}
+  .arts a::after{display:none}
+  .arts b::after{content:" →";color:var(--blue)}
+  /* цена — единственная заметная карточка: синяя заливка */
+  .pricecard{background:#2f5bd3;border:0;color:#fff;border-radius:22px}
+  .pricecard .price,.pricecard p{color:#fff}
+  .pricecard .price small{color:rgba(255,255,255,.75)}
+  .pricecard .btn{background:#fff;color:#1f45b0!important}
+  .pricecard .note{color:rgba(255,255,255,.8);border-left-color:rgba(255,255,255,.5)}
+  .pricecard .note strong{color:#fff}
+  .pricecard mark.todo{background:rgba(255,255,255,.18);color:#fff}
+  /* выделенные плашки → линейка слева */
+  .notice{background:none;border:0;border-left:3px solid var(--blue);border-radius:0;padding:4px 0 4px 14px}
+  /* чередование фона: «О враче» на белом во всю ширину */
+  .voice{background:var(--sheet);border:0}
+  .qual{margin-top:32px}
+}
+@media(max-width:899px){
+  /* материалы — светлая полоса, чтобы не было двух синих коробок подряд */
+  .card.blue.m-gift{background:var(--tint);color:var(--ink);border-radius:0;margin:40px -16px 0;padding:32px 16px}
+  .card.blue.m-gift .kicker{color:var(--blue)}
+  .card.blue.m-gift p{opacity:1;color:var(--ink-2)}
+  .card.blue.m-gift .btn.white{background:var(--blue);color:#fff!important;width:100%;min-height:52px}
+  .m-gift+*,.m-only:has(.m-gift)+.pricecard{margin-top:28px}
+}
+@media(max-width:899px){.card.blue.m-gift{border:0}}
