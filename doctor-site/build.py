@@ -71,7 +71,7 @@ def org_ld():
 
 def breadcrumbs(trail):
     items = [("Главная", "/")] + trail
-    crumbs = " › ".join(f'<a href="{p}">{e(n)}</a>' if i < len(items) - 1 else e(n) for i, (n, p) in enumerate(items))
+    crumbs = '<span class="sep"> › </span>'.join(f'<a href="{p}">{e(n)}</a>' if i < len(items) - 1 else f'<span class="crumb-cur">{e(n)}</span>' for i, (n, p) in enumerate(items))
     data = {"@context": "https://schema.org", "@type": "BreadcrumbList",
             "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": url(p)} for i, (n, p) in enumerate(items)]}
     return f'<nav class="crumbs" aria-label="Хлебные крошки">{crumbs}</nav>' + ld(data)
@@ -80,7 +80,7 @@ def breadcrumbs(trail):
 def messengers():
     links = []
     if CONTACTS["telegram"]:
-        links.append(f'<a href="https://t.me/{CONTACTS["telegram"]}" data-goal="messenger_telegram" rel="noopener">Telegram</a>')
+        links.append(f'<a href="https://t.me/{CONTACTS["telegram"]}" data-goal="messenger_telegram" rel="noopener">Telegram @{CONTACTS["telegram"]}</a>')
     if CONTACTS["whatsapp"]:
         links.append(f'<a href="https://wa.me/{CONTACTS["whatsapp"]}" data-goal="messenger_whatsapp" rel="noopener">WhatsApp</a>')
     if CONTACTS["phone"]:
@@ -520,7 +520,7 @@ def build_blog():
 
 
 def build_contacts():
-    body = f"""<div class="card"><p>Мессенджеры и телефон: {messengers()}</p><p>E-mail: {e(LEGAL['email'])}</p>
+    body = f"""<div class="card contact-card"><p><span class="kicker">Написать</span><a class="btn" href="https://t.me/{CONTACTS['telegram']}" data-goal="messenger_telegram" rel="noopener">Написать в Telegram</a></p><p>Telegram: <a href="https://t.me/{CONTACTS['telegram']}" rel="noopener">@{CONTACTS['telegram']}</a></p><p>E-mail: <a href="mailto:{LEGAL['email']}">{e(LEGAL['email'])}</a></p>
 <p>Консультации проводятся онлайн. Очный приём: {e(IN_PERSON)}.</p></div>
 <h2>Реквизиты</h2><p>{e(LEGAL['form'])} {e(DOCTOR['name'])}<br>ИНН {e(LEGAL['inn'])}<br>ОГРНИП {e(LEGAL['ogrnip'])}<br>{e(LEGAL['address'])}</p>
 {booking_form()}"""
@@ -627,7 +627,7 @@ def lead_form():
 <h2>Получить материалы</h2>
 <p>Оставьте контакт — пришлём ссылки на все материалы. Без рассылок и спама: только материалы и, если захотите, напоминание о записи.</p>
 <label for="m-name">Имя</label><input id="m-name" name="name" required autocomplete="given-name">
-<label for="m-contact">Telegram, WhatsApp или e-mail</label><input id="m-contact" name="contact" required>
+<label for="m-contact">Telegram или e-mail</label><input id="m-contact" name="contact" required>
 <label class="consent"><input type="checkbox" name="consent" required>
 <span>Я даю <a href="/privacy#consent">согласие на обработку персональных данных</a>.</span></label>
 <input type="hidden" name="source" value="materials">

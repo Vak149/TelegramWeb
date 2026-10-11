@@ -162,3 +162,41 @@ body{padding-bottom:0}
 .menu[open] .burger::before,.menu[open] .burger::after{content:"";position:absolute;left:0;top:0;width:18px;height:2px;background:currentColor;border-radius:2px;transform:rotate(45deg)}
 .menu[open] .burger::after{transform:rotate(-45deg)}
 .menu .burger{margin-right:0}
+
+/* ===== Мобильная полировка ===== */
+@media(max-width:899px){
+  /* удобные зоны касания */
+  .actions .btn.small{min-height:44px;padding:0 16px;display:inline-flex;align-items:center}
+  .menu summary{min-height:44px}
+  main details summary{padding:6px 0;min-height:44px;align-items:center}
+  form .consent input{width:22px;height:22px;flex:none;margin-top:1px}
+  form .consent{gap:12px;line-height:1.45}
+  form .btn,.pricecard .btn,.contact-card .btn{width:100%;min-height:52px}
+  form input,form textarea,form select{font-size:16px;min-height:50px}
+  /* хлебные крошки: на телефоне без текущей страницы — она и так в заголовке */
+  .crumbs .crumb-cur{display:none}
+  .crumbs a{display:inline-block;padding:6px 0}
+  /* блок дисклеймера компактнее */
+  .note{font-size:13px;line-height:1.5}
+  .pricecard{gap:14px}
+  .pricecard .price{font-size:34px}
+  /* подвал: крупнее ссылки, больше воздуха */
+  footer.site{padding-block:32px 40px;font-size:14px}
+  footer.site li{margin:0}
+  footer.site li a{display:inline-block;padding:7px 0}
+  footer.site p a{display:inline-block;padding:4px 0}
+  /* заголовки статей и карточек */
+  article h2{font-size:22px;margin-top:32px}
+  .post h2{font-size:18px}
+  .contact-card .kicker{margin-bottom:10px}
+}
+@media(max-width:899px){
+  form .consent input{min-height:0;height:22px;padding:0}
+  .brand{padding-block:12px}
+}
+footer.site strong{color:var(--ink)}
+@media(max-width:899px){
+  .crumbs .sep:has(+ .crumb-cur){display:none}
+  main .btn{text-align:center;justify-content:center}
+  article ~ p .btn,main>.wrap>p>.btn{display:flex;width:100%;min-height:52px}
+}
