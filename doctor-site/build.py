@@ -385,7 +385,7 @@ def build_about():
     d = DOCTOR
     edu = "".join(f"<li>{e(x['year'])} — {e(x['where'])}, {e(x['what'])}</li>" for x in d["education"])
     certs = "".join(f'<li>{e(c["what"])}, {e(c["year"])}, действует до {e(c["valid_until"])} — <a href="{c["doc"]}">документ</a></li>' for c in d["certificates"])
-    mem = "".join(f'<li><a href="{m["url"]}" rel="noopener">{e(m["name"])}</a>, членский № {e(m["number"])} — <a href="{m["doc"]}">подтверждение</a></li>' for m in d["memberships"])
+    mem = "".join(f'<li><a href="{m["url"]}" rel="noopener">{e(m["name"])}</a></li>' for m in d["memberships"])
     prof = "".join(f'<li><a href="{p["url"]}" rel="noopener me">{e(p["name"])}</a></li>' for p in d["profiles"]) or "<li><mark class=\"todo\">[УТОЧНИТЬ: ПроДокторов, НаПоправку, СберЗдоровье и др.]</mark></li>"
     pubs = ul(d["publications"]) if d["publications"] else "<p>—</p>"
     body = f"""<div class="hero"><div>
@@ -497,7 +497,6 @@ def build_reviews():
 def build_documents():
     blocks = [("accreditation-endo", "Аккредитация: эндокринология"), ("accreditation-diet", "Аккредитация / сертификат: диетология"),
               ("diploma", "Диплом о высшем образовании"), ("residency", "Диплом / удостоверение об ординатуре")]
-    blocks += [(m["doc"].split("#")[1], f'Членство: {m["name"]}') for m in DOCTOR["memberships"]]
     cards = "".join(f'<div class="card" id="{i}"><h2>{e(n)}</h2><p><mark class="todo">[УТОЧНИТЬ: скан в WebP, номер, дата, ссылка на реестр]</mark></p></div>' for i, n in blocks)
     body = f"""<p>Здесь собраны документы, подтверждающие образование и квалификацию. Персональные данные на сканах (паспортные данные, адреса) скрыты.</p>
 <div class="grid">{cards}</div>
