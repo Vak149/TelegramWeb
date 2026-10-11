@@ -154,3 +154,11 @@ footer.site a{color:var(--blue)!important}
 /* Без закреплённой кнопки записи внизу экрана */
 .sticky-cta{display:none!important}
 body{padding-bottom:0}
+
+/* «Меню» — без рамки: значок из трёх полосок и слово */
+.menu summary{box-shadow:none;padding:10px 4px;display:flex;align-items:center;gap:8px;font-weight:600}
+.menu .burger{display:block;width:18px;height:2px;background:currentColor;border-radius:2px;box-shadow:0 -6px 0 currentColor,0 6px 0 currentColor}
+.menu[open] .burger{background:transparent;box-shadow:none;position:relative}
+.menu[open] .burger::before,.menu[open] .burger::after{content:"";position:absolute;left:0;top:0;width:18px;height:2px;background:currentColor;border-radius:2px;transform:rotate(45deg)}
+.menu[open] .burger::after{transform:rotate(-45deg)}
+.menu .burger{margin-right:0}

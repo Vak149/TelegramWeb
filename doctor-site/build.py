@@ -149,7 +149,7 @@ def page(path, title, description, body, h1, schema=(), trail=None, og_type="web
 <a class="brand" href="/"><span class="mark" aria-hidden="true">{e(plain(DOCTOR['short_name'])[:1])}</span><span>{e(DOCTOR['short_name'])}</span></a>
 <nav class="main" aria-label="Основное меню">{nav}</nav>
 <div class="actions"><a class="btn small" href="/consultation#booking" data-goal="cta_header">Записаться</a>
-<details class="menu"><summary aria-label="Меню">Меню</summary><nav aria-label="Меню">{nav}</nav></details></div>
+<details class="menu"><summary aria-label="Меню"><i class="burger" aria-hidden="true"></i>Меню</summary><nav aria-label="Меню">{nav}</nav></details></div>
 </div></header>
 {hero if hero else f'<div class="pagehead blue grain">{MOL}<div class="wrap">{crumbs}<h1>{e(h1)}</h1></div></div>'}
 <main><div class="wrap">

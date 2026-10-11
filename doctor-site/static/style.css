@@ -377,3 +377,4 @@ footer.site ul{columns:2;padding-left:18px}
 .notice{background:var(--tint);border:1.5px solid var(--blue);border-radius:16px;padding:16px 18px;margin:24px 0;font-size:15px}
 .notice strong{color:var(--blue-deep)}
 footer.site strong{color:#fff}
+.menu .burger{display:inline-block;width:16px;height:2px;background:currentColor;box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor;vertical-align:middle;margin-right:8px}
