@@ -11,7 +11,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from config import (IN_PERSON, NOT_MEDICAL, CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
+from config import (DOC_SCANS, IN_PERSON, NOT_MEDICAL, CONSULT_HOW, SUPPORT, CONTACTS, CONTRAINDICATIONS, DISCLAIMER, DOCTOR, FORM_ACTION, LEGAL,
                     SERVICE, SITE_URL, YANDEX_METRIKA_ID)
 from decor import CURVE, MOL
 from content_articles import MORE_ARTICLES
@@ -496,8 +496,16 @@ def build_reviews():
 
 def build_documents():
     blocks = [("accreditation-endo", "Аккредитация: эндокринология"), ("accreditation-diet", "Аккредитация / сертификат: диетология"),
-              ("diploma", "Диплом о высшем образовании"), ("residency", "Диплом / удостоверение об ординатуре")]
-    cards = "".join(f'<div class="card" id="{i}"><h2>{e(n)}</h2><p><mark class="todo">[УТОЧНИТЬ: скан в WebP, номер, дата, ссылка на реестр]</mark></p></div>' for i, n in blocks)
+              ("diploma", "Диплом о высшем образовании"), ("residency", "Диплом об окончании ординатуры")]
+    def doc_card(i, n):
+        s = DOC_SCANS.get(i)
+        if not s:
+            return f'<div class="card" id="{i}"><h2>{e(n)}</h2><p><mark class="todo">[УТОЧНИТЬ: скан в WebP, номер, дата, ссылка на реестр]</mark></p></div>'
+        return (f'<div class="card doc-scan" id="{i}"><h2>{e(n)}</h2><p>{e(s["text"])}</p>'
+                f'<a href="{s["img"]}" target="_blank" rel="noopener"><img src="{s["thumb"]}" width="800" height="566" loading="lazy" '
+                f'alt="{html.escape(n)} — {html.escape(plain(DOCTOR["name"]))}"></a><p class="doc-hint">Нажмите, чтобы открыть в полном размере</p></div>')
+    blocks = [b for b in blocks if b[0] == "residency"] + [b for b in blocks if b[0] != "residency"]
+    cards = "".join(doc_card(i, n) for i, n in blocks)
     body = f"""<p>Здесь собраны документы, подтверждающие образование и квалификацию. Персональные данные на сканах (паспортные данные, адреса) скрыты.</p>
 <div class="grid">{cards}</div>
 <div class="card" id="license"><h2>Лицензия на медицинскую деятельность</h2><p>Консультации проводятся как информационная услуга. <mark class="todo">[УТОЧНИТЬ: есть ли лицензия; если есть — номер и ссылка на реестр Росздравнадзора]</mark></p></div>"""

@@ -321,3 +321,6 @@ footer.site mark.todo{background:rgba(255,255,255,.12);color:#dbe6ff}
 @media(max-width:899px){.more-link{margin:20px 0 0;font-size:15px}.qual .sub{display:none}}
 .voice{margin-top:48px}
 @media(max-width:899px){.voice{margin-top:0}.qual{margin:40px 0 32px}}
+.doc-scan img{width:100%;max-width:720px;border:1px solid var(--line);border-radius:8px;margin-top:8px}
+.doc-hint{font-size:13px;color:var(--ink-2);margin-top:6px}
+main .grid:has(.doc-scan){grid-template-columns:1fr}
