@@ -105,7 +105,7 @@ NAV = [("/consultation", "Консультация"), ("/about", "О враче"
 SEO_Q = {
     "/": "Эндокринолог и диетолог онлайн", "/about": "Врач, образование и опыт",
     "/consultation": "Онлайн-консультация, цена", "/thyroid": "Щитовидная железа онлайн",
-    "/diabetes": "Диабет и преддиабет онлайн", "/insulin-resistance": "Инсулинорезистентность онлайн",
+    "/diabetes": "Диабет и преддиабет онлайн",
     "/weight": "Лишний вес: консультация онлайн", "/hormones": "Гормональные нарушения онлайн",
     "/nutrition": "Диетолог онлайн: питание", "/faq": "Вопросы о консультации",
     "/reviews": "Отзывы о консультациях", "/documents": "Дипломы и сертификаты врача",
@@ -252,7 +252,7 @@ def mobile_parts(d):
     q_rows += [("АКК", c["what"], f'действует до {c["valid_until"]}', c["doc"], "документ") for c in d["certificates"]]
     qual = "".join(f'<a class="q" href="{h}"><span class="ic">{ic}</span><span><b>{e(t)}</b><span>{e(s)}</span></span><span class="doc">{dl} →</span></a>' for ic, t, s, h, dl in q_rows)
     socs = "".join(f'<a class="soc" href="{m["url"]}" rel="noopener"><b>{ab}</b><span>{ru}</span></a>' for m, ab, ru in zip(d["memberships"], ["ESE", "EASD", "ENDO"], ["Европейское общество эндокринологов", "Европейская ассоциация по изучению диабета", "Endocrine Society, США"]))
-    hexes = {"thyroid": "Т4", "diabetes": "A1c", "insulin-resistance": "ИР", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
+    hexes = {"thyroid": "Т4", "diabetes": "A1c", "weight": "ИМТ", "hormones": "E2", "nutrition": "ккал"}
     spark = '<svg viewBox="0 0 120 50" aria-hidden="true" focusable="false"><path d="M0,44 C20,42 26,30 36,12 C42,2 48,10 58,20 C74,34 96,36 120,40" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
     rail = "".join(f'<a class="dcard" href="/{x["slug"]}"><span class="hex">{hexes.get(x["slug"], "")}</span><h3>{e(x["nav"])}</h3><p>{e(x["symptoms"][0][:1].upper() + x["symptoms"][0][1:])}</p><span class="go">Подробнее →</span>{spark}</a>' for x in DIRECTIONS)
     pick = ["ttg-v-norme-a-samochuvstvie-plohoe", "pochemu-ves-ne-uhodit-pri-deficite-kalorij", "kakie-analizy-sdat-pered-konsultaciej-endokrinologa"]
@@ -446,7 +446,7 @@ def build_consultation():
 
 
 def build_direction(d):
-    tools_map = {"insulin-resistance": ("/analizy/glikirovannyj-gemoglobin", "Разбор анализа HbA1c"), "weight": ("/calculators/bmi", "Калькулятор ИМТ"),
+    tools_map = {"weight": ("/calculators/bmi", "Калькулятор ИМТ"),
                  "thyroid": ("/analizy/ttg", "Разбор анализа на ТТГ"),
                  "diabetes": ("/analizy/glikirovannyj-gemoglobin", "Разбор анализа HbA1c")}
     t = tools_map.get(d["slug"])
