@@ -206,7 +206,7 @@ def doctor_block():
     badges = "".join(f'<li><a href="{m["url"]}" rel="noopener">{e(m["name"])}</a></li>' for m in DOCTOR["memberships"])
     return f"""<div class="card doctor"><h2>Врач</h2>
 <img src="{DOCTOR['photo']}" width="120" height="168" loading="lazy" alt="{html.escape(plain(DOCTOR['name']))}, {DOCTOR['specialty']}">
-<p><a href="/about"><strong>{e(DOCTOR['name'])}</strong></a>, {e(DOCTOR['specialty'])}. Практика с {e(DOCTOR['practice_since'])} года.</p>
+<p><a href="/about"><strong>{e(DOCTOR['name'])}</strong></a>, {e(DOCTOR['specialty'])}.</p>
 <p>Член профессиональных ассоциаций:</p><ul class="badges">{badges}</ul>
 <p><a href="/documents">Дипломы, сертификаты и подтверждения членства →</a></p></div>"""
 
@@ -389,7 +389,7 @@ def build_about():
     prof = "".join(f'<li><a href="{p["url"]}" rel="noopener me">{e(p["name"])}</a></li>' for p in d["profiles"]) or "<li><mark class=\"todo\">[УТОЧНИТЬ: ПроДокторов, НаПоправку, СберЗдоровье и др.]</mark></li>"
     pubs = ul(d["publications"]) if d["publications"] else "<p>—</p>"
     body = f"""<div class="hero"><div>
-<p><strong>{e(d['specialty'])}</strong>. Практика с {e(d['practice_since'])} года.</p>
+<p><strong>{e(d['specialty'])}</strong>.</p>
 <blockquote>{e(d['credo'])}</blockquote></div>
 <img class="photo" src="{d['photo']}" width="300" height="420" alt="{html.escape(plain(d['name']) or 'Врач')}, {d['specialty']}"></div>
 <h2>Образование</h2><ul>{edu}</ul>
